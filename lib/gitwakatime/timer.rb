@@ -38,8 +38,9 @@ module GitWakaTime
         commit[:files].each do |file|
           file[:time_in_seconds] = relevant_actions(commit, file)
           .map { |action| action['duration'] }
-          .reduce { |a, e| a + e }.to_f
-          commit_time += file[:time_in_seconds]
+          .compact
+          .reduce { |a, e| a + e }
+          commit_time += file[:time_in_seconds].to_f
         end
         commit[:time_in_seconds] = commit_time.to_f
       end
