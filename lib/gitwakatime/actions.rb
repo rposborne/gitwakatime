@@ -1,17 +1,17 @@
 module GitWakaTime
   # Extract Duration Data from Actions for the WAKATIME API
-  module Actions
-    def actions_to_durations(actions, project = nil, timeout = nil)
+  class Actions
+    def actions_to_durations(actions, project = nil, timeout = 15)
       durations = []
-      current = nil
+      current = []
       chart_filters = {  'writes' =>  {} }
 
       actions.each do | action |
         # the first action just sets state and does nothing
-        if current
+        unless current.empty?
 
           # get duration since last action
-          duration = round(action.time, 2) - round(current['time'], 2)
+          duration = action.time.round - current['time'].round
 
           duration = 0.0 if duration < 0
 
@@ -38,8 +38,8 @@ module GitWakaTime
 
         end
         # set state (re-start the clock)
-        current = action.to_dict(%w(branch project time file language))
-        del current['id']
+        current = action
+        current.delete('id')
 
         durations
       end
