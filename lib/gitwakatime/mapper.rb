@@ -9,7 +9,7 @@ module GitWakaTime
       logs =  @git.log(100).since(start_date)
 
       @commits = logs.map do |git_commit|
-        Commit.new(@git, git_commit).to_hash
+        Commit.new(@git, git_commit)
       end
     end
   end

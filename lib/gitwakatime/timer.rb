@@ -13,39 +13,57 @@ module GitWakaTime
     end
 
     def load_actions
-      GitWakaTime::Log.new 'querying WakaTime actions'
+      Log.new 'querying WakaTime actions'
 
       time = Benchmark.realtime do
         @actions = @client.actions(project: @project)
       end
 
-      GitWakaTime::Log.new "API took #{time}s"
-      GitWakaTime::Log.new 'starting to calculate WakaTime durations'
+      Log.new "API took #{time}s"
       @actions_with_durations = Actions.new.actions_to_durations(@actions)
-      GitWakaTime::Log.new 'calculated WakaTime durations'
+      @total_time = sum_actions @actions_with_durations
+
+      Log.new "Total Recorded time #{ChronicDuration.output @total_time}", :red
     end
 
     def relevant_actions(commit, file)
       relevant_actions = @actions_with_durations.select do |action|
-        action['file'] == File.expand_path(file[:name]) &&
-          Time.at(action['time']) >= commit[:commited_at] &&
-          Time.at(action['time'])  <= file[:dependent_commit][:commited_at] if file[:dependent_commit]
-      end
 
+        action['file'] == File.expand_path(file[:name]) &&
+          Time.at(action['time']) <= commit.date
+      end
+      if file[:dependent_commit]
+        relevant_actions = relevant_actions.select do |action|
+          Time.at(action['time'])  >= file[:dependent_commit].date
+        end
+      end
       relevant_actions
+    end
+
+    def sum_actions(actions)
+      actions.map { |action| action['duration'] }
+      .compact
+      .reduce { |a, e| a + e }.to_f
     end
 
     def process
       @commits.each do |commit|
         commit_time = 0.0
-        commit[:files].each do |file|
-          file[:time_in_seconds] = relevant_actions(commit, file)
-          .map { |action| action['duration'] }
-          .compact
-          .reduce { |a, e| a + e }
-          commit_time += file[:time_in_seconds].to_f
+        if !commit.files.empty?
+          commit.files.each_with_index do |file, i|
+            time = sum_actions relevant_actions(commit, file)
+            commit.files[i][:time_in_seconds] += time
+            commit_time += time
+          end
+        else
+          prior_actions = @actions_with_durations.select do |action|
+            Time.at(action['time']) <= commit.date
+          end
+
+          commit_time = sum_actions(prior_actions)
         end
-        commit[:time_in_seconds] = commit_time.to_f
+
+        commit.time_in_seconds = commit_time.to_f
       end
     end
   end

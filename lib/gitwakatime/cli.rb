@@ -9,16 +9,21 @@ module  GitWakaTime
     method_option :file, aliases: '-f', default: '.'
     def calc
       root_path = File.expand_path(options.file)
-      ap 'creating dependent commit map'
+      Log.new 'creating dependent commit map'
       @mapper   = Mapper.new(root_path)
-      ap 'processing commit times'
+      Log.new 'processing commit times'
       @timer    = Timer.new(@mapper.commits)
 
       @commits_with_duration = @timer.process
-
+      Log.new("Total Presented Time #{ChronicDuration.output @commits_with_duration.map { |c| c.time_in_seconds }.reduce { |a, e| a + e }.to_f} ".red)
       @commits_with_duration.each do |commit|
-         Log.new("#{commit[:sha1][0..8]} took #{ChronicDuration.output(commit[:time_in_seconds])}", :green)
-       end
+        puts ' %-8s %-30s %-80s'.green % [commit.sha[0..8], ChronicDuration.output(commit.time_in_seconds), commit.message]
+
+        commit.files.each do |file|
+          puts '    %-40s %-20s'.blue % [ChronicDuration.output(file[:time_in_seconds].to_f), file[:name]]
+
+        end
+      end
     end
   end
 end
