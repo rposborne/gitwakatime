@@ -28,7 +28,8 @@ module GitWakaTime
     def relevant_actions(commit, file)
       @actions_with_durations.select do |action|
         action['file'] == File.expand_path(file[:name]) &&
-          action['time'] >= commit[:commited_at].to_i
+          action['time'] >= commit[:commited_at].to_i &&
+          action['time'] >= file[:dependent_commit][:commited_at].to_i if file[:dependent_commit]
       end
     end
 
