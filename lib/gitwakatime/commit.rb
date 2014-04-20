@@ -1,14 +1,18 @@
 module GitWakaTime
   class Commit
-    def initialize(git, commit)
+    def initialize(git, commit, load_files = true)
       @commit = commit
       @git = git
+      @load_files = load_files
     end
 
     def files
       return [] unless @commit.parent
       @commit.diff_parent.stats[:files].keys.map do |file|
-        { name: file , dependent_commit: dependent_commit(file) }
+        {
+          name: file ,
+          dependent_commit: (dependent_commit(file) if @load_files)
+        }
       end
     end
 
@@ -30,7 +34,12 @@ module GitWakaTime
     private
 
     def dependent_commit(file)
-      Commit.new(@git, @git.log(100).object(file)[1]).to_hash
+      @dependent_commit = load_dependent_commit(file)
+      Commit.new(@git, @dependent_commit , false).to_hash if @dependent_commit
+   end
+
+    def load_dependent_commit(file)
+      @git.log(100).object(file)[1]
     rescue Git::GitExecuteError
       nil
     end
