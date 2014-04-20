@@ -17,7 +17,7 @@ module  GitWakaTime
       @commits_with_duration = @timer.process
 
       @commits_with_duration.each do |commit|
-         Log.new("#{commit[:sha1][0..8]} took #{ChronicDuration.output(commit[:time_in_seconds])}")
+         Log.new("#{commit[:sha1][0..8]} took #{ChronicDuration.output(commit[:time_in_seconds])}", :green)
        end
     end
   end
