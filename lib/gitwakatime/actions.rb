@@ -1,4 +1,4 @@
-module Gitwakatime
+module GitWakaTime
   # Extract Duration Data from Actions for the WAKATIME API
   module Actions
     def actions_to_durations(actions, project = nil, timeout = nil)

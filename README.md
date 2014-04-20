@@ -1,4 +1,4 @@
-# Gitwakatime
+# GitWakaTime
 
 TODO: Write a gem description
 
