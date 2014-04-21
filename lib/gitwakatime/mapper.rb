@@ -1,7 +1,7 @@
 require 'awesome_print'
 module GitWakaTime
   class Mapper
-    attr_accessor :commits
+    attr_accessor :commits, :git
     def initialize(path)
       # current_project = File.basename(path)
       @git = Git.open(path)

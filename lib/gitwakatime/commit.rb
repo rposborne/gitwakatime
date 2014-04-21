@@ -13,39 +13,22 @@ module GitWakaTime
       @files = load  if load_files
     end
 
-    def load
-      return [] unless @raw_commit.parent
-      @raw_commit.diff_parent.stats[:files].keys.map do |file|
-        {
-          name: file ,
-          time_in_seconds: 0,
-          dependent_commit: (dependent_commit(file) if @load_files)
-        }
-      end
-    end
-
-    def to_hash
-      {
-        time_in_seconds: @time_in_seconds,
-        sha1: @sha,
-        commited_at: @commited_at,
-        message: @message,
-        files: @files,
-        dependent_commits: []
-      }
+    def to_s
+      format('%-8s %8s %-30s %-80s'.green,
+             sha[0..8],
+             date,
+             ChronicDuration.output(time_in_seconds),
+             message
+             )
     end
 
     private
 
-    def dependent_commit(file)
-      @dependent_commit = load_dependent_commit(file)
-      Commit.new(@git, @dependent_commit , false) if @dependent_commit
-    end
-
-    def load_dependent_commit(file)
-      @git.log(100).until(@raw_commit.date.to_s).object(file)[1]
-    rescue Git::GitExecuteError
-      nil
+    def load
+      return [] unless @raw_commit.parent
+      @raw_commit.diff_parent.stats[:files].keys.map do |file|
+        CommitedFile.new(git: @git , parent_commit: @raw_commit, name: file, dependent: false)
+      end
     end
   end
 end

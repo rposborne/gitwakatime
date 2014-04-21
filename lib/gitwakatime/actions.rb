@@ -1,12 +1,31 @@
 module GitWakaTime
   # Extract Duration Data from Actions for the WAKATIME API
   class Actions
-    def actions_to_durations(actions, project = nil, timeout = 15)
+    def initialize(args)
+      fail if args[:project].nil?
+      @project = args[:project]
+      @args = args
+      @session     = Wakatime::Session.new(
+        api_key: '1ce219c6-73ec-4ed7-be64-11fbfcc8c9d7'
+      )
+      @client      = Wakatime::Client.new(@session)
+      load_actions
+    end
+
+    def load_actions
+      Log.new "querying WakaTime actions for #{@project}"
+      time = Benchmark.realtime do
+        @actions = @client.actions(@args)
+        # remove returned actions that do not have the project we want
+        @actions.keep_if { |a| a['project'] == @project }
+      end
+      Log.new "API took #{time}s"
+    end
+
+    def actions_to_durations(project = nil, timeout = 15)
       durations = []
       current = []
-      chart_filters = {  'writes' =>  {} }
-
-      actions.each do | action |
+      @actions.each do | action |
         # the first action just sets state and does nothing
         unless current.empty?
 
@@ -22,27 +41,15 @@ module GitWakaTime
             current['duration'] = duration
 
             # log current action as a duration
-            durations.append(current)
+            durations << current
           end
-        end
-        # is this action a file or project
-        if project
-          id = action.file
-        else
-          id = action.project
-
-          id = 'Unknown Project' unless id
-
-          # update projects that have writes
-          chart_filters['writes'][id] = True if action.is_write
-
         end
         # set state (re-start the clock)
         current = action
         current.delete('id')
 
-        durations
       end
+      durations
     end
   end
 end
