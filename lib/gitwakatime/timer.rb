@@ -17,6 +17,7 @@ module GitWakaTime
 
       time = Benchmark.realtime do
         @actions = @client.actions(project: @project)
+        @actions.keep_if { |a| a['project'] == @project }
       end
 
       Log.new "API took #{time}s"
