@@ -43,7 +43,7 @@ module GitWakaTime
     end
 
     def load_dependent_commit(file)
-      @git.log(3).object(file)[1]
+      @git.log(100).until(@raw_commit.date.to_s).object(file)[1]
     rescue Git::GitExecuteError
       nil
     end
