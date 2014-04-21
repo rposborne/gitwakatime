@@ -3,31 +3,36 @@ require 'logger'
 require 'wakatime'
 require 'ap'
 require 'chronic_duration'
+require 'yaml'
 module  GitWakaTime
+  # Provides two CLI actions init and tally
   class Cli < Thor
-    desc 'calc', 'Prints calc'
+    include Thor::Actions
+    desc 'init', 'Setups up Project for using the wakatime API
+      it will also add to your git ignore file'
     method_option :file, aliases: '-f', default: '.'
 
-    def calc
-      root_path = File.expand_path(options.file)
-      Log.new 'creating commit map'
-      @mapper   = Mapper.new(root_path)
+    def init
+      say('Adding .wakatime.yml to home directory')
 
-      @commits_with_duration = Timer.new(
-        @mapper.commits,
-        File.basename(root_path)
-      ).process
+      create_file File.join(Dir.home, '.wakatime.yml') do
+        YAML.dump(api_key: 'Your API Key', last_commit: nil, log_level: :info)
+      end
+    end
 
-      Log.new("Total Commited Time #{ChronicDuration.output @commits_with_duration
-                  .map { |c| c.time_in_seconds }
-              .reduce { |a, e| a + e }.to_f} ".red
-              )
+    desc 'tally', 'Produce time spend for each commit and file in each commit'
+    method_option :file, aliases: '-f', default: '.'
+    def tally
+      path , GitWakaTime.config.root = File.expand_path(options.file)
+      say 'creating commit map'
+      GitWakaTime.config.load_config_yaml
+      @mapper   = Mapper.new(path)
 
+      @timer = Timer.new(@mapper.commits, File.basename(path))
+      @commits_with_duration = @timer.process
       @commits_with_duration.each do |commit|
         Log.new commit.to_s
-        commit.files.each do |file|
-          Log.new file.to_s
-        end
+        commit.files.each { |file| Log.new file.to_s }
       end
     end
   end

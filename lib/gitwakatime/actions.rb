@@ -5,9 +5,7 @@ module GitWakaTime
       fail if args[:project].nil?
       @project = args[:project]
       @args = args
-      @session     = Wakatime::Session.new(
-        api_key: '1ce219c6-73ec-4ed7-be64-11fbfcc8c9d7'
-      )
+      @session     = Wakatime::Session.new(api_key: GitWakaTime.config.api_key)
       @client      = Wakatime::Client.new(@session)
       load_actions
     end
