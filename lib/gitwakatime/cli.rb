@@ -1,9 +1,9 @@
 require 'git'
 require 'logger'
 require 'wakatime'
-require 'ap'
 require 'chronic_duration'
 require 'yaml'
+require 'thor'
 module  GitWakaTime
   # Provides two CLI actions init and tally
   class Cli < Thor
@@ -24,7 +24,6 @@ module  GitWakaTime
     method_option :file, aliases: '-f', default: '.'
     def tally
       path , GitWakaTime.config.root = File.expand_path(options.file)
-      say 'creating commit map'
       GitWakaTime.config.load_config_yaml
       @mapper   = Mapper.new(path)
 
