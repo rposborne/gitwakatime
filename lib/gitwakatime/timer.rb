@@ -1,4 +1,6 @@
 require 'benchmark'
+require 'colorize'
+require 'pry'
 module GitWakaTime
   # Integrates the nested hash from mapper with actions api
   class Timer
@@ -16,7 +18,9 @@ module GitWakaTime
         c.files.map(&:dependent_commit).compact.map(&:date)
       end
       timestamps = (commits + d_commits.flatten).uniq
-      { start: timestamps.min, end: timestamps.max }
+      api_limit = Time.now - 60 * 60 * 24 * 60
+      min  = api_limit > timestamps.min ?  api_limit : timestamps.min
+      { start: min, end: timestamps.max }
     end
 
     def total
@@ -57,7 +61,7 @@ module GitWakaTime
       # The file should be the same file as we expect
       # TODO: Might need to pass root_path down
       actions = actions.select do |action|
-        action['file'] == File.expand_path(file.name)
+        action['file'] == File.join(file.git.dir.path, file.name)
       end
       # If this file had an earlier commit ensure the actions timestamp
       # is after that commit
