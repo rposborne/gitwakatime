@@ -1,6 +1,6 @@
 module  GitWakaTime
   class CommitedFile
-    attr_reader :name, :dependent_commit
+    attr_reader :name, :dependent_commit, :git
     attr_accessor :time_in_seconds
     def initialize(args)
       @git = args[:git]
