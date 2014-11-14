@@ -23,15 +23,22 @@ module  GitWakaTime
     desc 'tally', 'Produce time spend for each commit and file in each commit'
     method_option :file, aliases: '-f', default: '.'
     def tally
-      path , GitWakaTime.config.root = File.expand_path(options.file)
+      path, GitWakaTime.config.root = File.expand_path(options.file)
       GitWakaTime.config.load_config_yaml
       @mapper   = Mapper.new(path)
 
       @timer = Timer.new(@mapper.commits, File.basename(path))
-      @commits_with_duration = @timer.process
-      @commits_with_duration.each do |commit|
-        Log.new commit.to_s
-        commit.files.each { |file| Log.new file.to_s }
+      @commits_with_duration_by_date = @timer.process
+      @commits_with_duration_by_date.each do |date, commits|
+        Log.new format('%-40s %-40s'.blue,
+                       date,
+                       "Total #{ChronicDuration.output commits.map(&:time_in_seconds).reduce(&:+)}"
+                       )
+        commits.each do |commit|
+          Log.new commit.message
+          # Log.new commit.to_s
+          # commit.files.each { |file| Log.new file.to_s }
+        end
       end
     end
   end

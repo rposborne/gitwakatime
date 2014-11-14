@@ -1,7 +1,9 @@
 module GitWakaTime
   # Extract Duration Data from Actions for the WAKATIME API
   class Actions
+    attr_accessor :actions
     def initialize(args)
+      return @actions = args[:actions] if args[:actions]
       fail if args[:project].nil?
       @project = args[:project]
       @args = args
@@ -20,7 +22,7 @@ module GitWakaTime
       Log.new "API took #{time}s"
     end
 
-    def actions_to_durations(project = nil, timeout = 15)
+    def actions_to_durations(_project = nil, timeout = 15)
       durations = []
       current = []
       @actions.each do | action |

@@ -13,7 +13,7 @@ module  GitWakaTime
     end
 
     def to_s
-      format('    %-40s %-40s %-20s'.blue ,
+      format('    %-40s %-40s %-20s'.blue,
              ChronicDuration.output(time_in_seconds.to_f),
              name,
              (dependent_commit.sha[0..8] if @dependent_commit)
@@ -24,7 +24,7 @@ module  GitWakaTime
 
     def write_dependent_commit(name)
       commit = load_dependent_commit(name)
-      @dependent_commit = Commit.new(@git, commit , false) if commit
+      @dependent_commit = Commit.new(@git, commit, false) if commit
     end
 
     def load_dependent_commit(name)

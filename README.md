@@ -1,24 +1,22 @@
 # GitWakaTime
 
-TODO: Write a gem description
+GitWakaTime is a mashup between data obtained through "wakatime" and the data we all create using git. 
+The prinicpal is to capture a baseline of activity for a task and answer the age old question "How much time did I spend on this?"
 
 ## Installation
 
-Add this line to your application's Gemfile:
-
-    gem 'gitwakatime'
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
+Install the gem:
 
     $ gem install gitwakatime
 
 ## Usage
 
-TODO: Write usage instructions here
+    Creates a .gitwakatime.yml file on the user's home directory ~/.gitwakatime.yml which will contain your api keys
+    $ gitwakatime init 
+
+    Process the current directory
+
+    $ gitwakatime tally 
 
 ## Contributing
 
