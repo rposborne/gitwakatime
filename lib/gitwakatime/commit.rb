@@ -26,9 +26,10 @@ module GitWakaTime
     private
 
     def load
+      # TODO: Assume gap time to lookup time prior to first commit.
       return [] unless @raw_commit.parent
       @raw_commit.diff_parent.stats[:files].keys.map do |file|
-        CommitedFile.new(git: @git, parent_commit: @raw_commit, name: file, dependent: false)
+        CommitedFile.new(git: @git, commit: @raw_commit, name: file, dependent: false)
       end
     end
   end

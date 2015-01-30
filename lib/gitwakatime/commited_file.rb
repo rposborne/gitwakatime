@@ -5,15 +5,14 @@ module  GitWakaTime
     def initialize(args)
       @git = args[:git]
       @name = args[:name]
-      @parent_commit = args[:parent_commit]
+      @commit = args[:commit]
       @time_in_seconds = 0
-      @find_dependent = args[:dependent] || true
 
-      write_dependent_commit(name) if @find_dependent
+      write_dependent_commit(name)
     end
 
     def to_s
-      format('    %-40s %-40s %-20s'.blue,
+      format('                %-40s %-40s %-20s'.blue,
              ChronicDuration.output(time_in_seconds.to_f),
              name,
              (dependent_commit.sha[0..8] if @dependent_commit)
@@ -28,7 +27,7 @@ module  GitWakaTime
     end
 
     def load_dependent_commit(name)
-      @git.log(100).until(@parent_commit.date.to_s).object(name)[1]
+      @git.log.object(@commit.sha).path(name)[1]
     rescue Git::GitExecuteError
       nil
     end
