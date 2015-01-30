@@ -1,6 +1,5 @@
 require 'benchmark'
 require 'colorize'
-require 'pry'
 
 module GitWakaTime
   # Integrates the nested hash from mapper with actions api
@@ -16,7 +15,7 @@ module GitWakaTime
         Log.new "Requesting actions #{params['start'].to_date} to #{params['end'].to_date}".red
         @actions = @actions.concat Actions.new(params).actions
       end
-      
+
       @actions_with_durations =  Actions.new(actions: @actions).actions_to_durations
     end
 
