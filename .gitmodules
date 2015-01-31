@@ -1,3 +1,0 @@
-[submodule "spec/dummy"]
-	path = spec/dummy
-	url = https://github.com/rposborne/dummy_repo.git
