@@ -1,0 +1,6 @@
+language: ruby
+rvm:
+  - 2.2.0
+before_install:
+  - gem install bundler --pre
+script: bundle exec rake spec
