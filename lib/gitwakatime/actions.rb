@@ -17,9 +17,13 @@ module GitWakaTime
       time = Benchmark.realtime do
         @actions = @client.actions(@args)
         # remove returned actions that do not have the project we want
-        @actions.keep_if { |a| a['project'] == @project }
+        @actions =  @actions.keep_if do  |a|
+          a['project'] == @project
+        end
+
       end
       Log.new "API took #{time}s"
+      @actions
     end
 
     def actions_to_durations(_project = nil, timeout = 15)

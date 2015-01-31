@@ -2,19 +2,16 @@ module GitWakaTime
   # Th
   class Mapper
     attr_accessor :commits, :git
-    def initialize(path, commits = 500)
+    def initialize(path, commits: 500, start_at: Date.today)
       Log.new 'Mapping commits for dependent commits'
       time = Benchmark.realtime do
         @git = Git.open(path)
-        # TODO: Expose since timestamp as a CLI option
-        # TODO: Expose number of commits as a CLI option
-        first_of_month = Date.new(Date.today.year, Date.today.month - 3, 1)
 
-        logs =  @git.log(commits).since(first_of_month)
+        logs =  @git.log(commits).since(start_at).until(Date.today)
 
         @commits = logs.map do |git_commit|
           Commit.new(@git, git_commit)
-        end
+        end.compact
       end
       Log.new "Map Completed took #{time}s"
     end

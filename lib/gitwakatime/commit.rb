@@ -1,6 +1,6 @@
 module GitWakaTime
   class Commit
-    attr_accessor :sha, :date, :message, :files, :time_in_seconds, :git, :author
+    attr_accessor :raw_commit, :sha, :date, :message, :files, :time_in_seconds, :git, :author
 
     def initialize(git, commit, load_files = true)
       @raw_commit      = commit
@@ -11,11 +11,15 @@ module GitWakaTime
       @time_in_seconds = 0
       @git             = git
       @load_files      = load_files
-      @files = load  if load_files
+      @files = get_files  if load_files
+    end
+
+    def inspect
+      [sha[0..8], time_in_seconds]
     end
 
     def to_s
-      format('%-8s %8s %-30s %-80s'.green,
+      format('        %-8s %8s %-30s %-80s'.green,
              sha[0..8],
              date,
              ChronicDuration.output(time_in_seconds),
@@ -23,9 +27,13 @@ module GitWakaTime
              )
     end
 
+    def oldest_dependent
+      @files.sort { |f| f.commit.date }.first
+    end
+
     private
 
-    def load
+    def get_files
       # TODO: Assume gap time to lookup time prior to first commit.
       return [] unless @raw_commit.parent
       @raw_commit.diff_parent.stats[:files].keys.map do |file|

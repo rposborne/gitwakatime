@@ -8,27 +8,44 @@ module  GitWakaTime
       @commit = args[:commit]
       @time_in_seconds = 0
 
-      write_dependent_commit(name)
+      @dependent_commit = find_dependent_commit(name)
     end
 
     def to_s
-      format('                %-40s %-40s %-20s'.blue,
-             ChronicDuration.output(time_in_seconds.to_f),
-             name,
-             (dependent_commit.sha[0..8] if @dependent_commit)
+      format('                 %-20s %-40s %-100s '.blue,
+             (dependent_commit.sha[0..8] if @dependent_commit),
+             ChronicDuration.output(@time_in_seconds.to_f),
+             name
+
              )
     end
 
     private
 
-    def write_dependent_commit(name)
-      commit = load_dependent_commit(name)
-      @dependent_commit = Commit.new(@git, commit, false) if commit
+    def find_dependent_commit(name)
+      i = 1
+      dependent = nil
+      commit = 1
+
+      begin
+        commit = load_dependent_commit(name, i: i)
+        dependent = Commit.new(@git, commit, false) if allowed_commit(commit)
+        i += 1
+      end until !dependent.nil? || commit.nil?
+      dependent
     end
 
-    def load_dependent_commit(name)
-      @git.log.object(@commit.sha).path(name)[1]
+    def allowed_commit(commit)
+      return false if commit.nil?
+      return false if commit.author.name != @git.config('user.name')
+      return false if commit.message.include?('Merge branch')
+      true
+    end
+
+    def load_dependent_commit(name, i: 1)
+      @git.log.object(@commit.sha).path(name)[i]
     rescue Git::GitExecuteError
+      puts error
       nil
     end
   end

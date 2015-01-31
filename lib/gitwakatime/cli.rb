@@ -4,6 +4,11 @@ require 'wakatime'
 require 'chronic_duration'
 require 'yaml'
 require 'thor'
+require 'active_support/core_ext/date/calculations'
+require 'active_support/core_ext/date_and_time/calculations'
+require 'active_support/core_ext/integer/time'
+require 'active_support/core_ext/time'
+
 module  GitWakaTime
   # Provides two CLI actions init and tally
   class Cli < Thor
@@ -22,22 +27,26 @@ module  GitWakaTime
 
     desc 'tally', 'Produce time spend for each commit and file in each commit'
     method_option :file, aliases: '-f', default: '.'
+    method_option :start_on, aliases: '-s', default: nil
     def tally
       path, GitWakaTime.config.root = File.expand_path(options.file)
+      date = Date.parse(options.start_on) if options.start_on
+      date = 1.month.ago.beginning_of_month unless options.start_on
       GitWakaTime.config.load_config_yaml
-      @mapper   = Mapper.new(path)
+      @git_map = Mapper.new(path, start_at: date)
+      @actions = Query.new(@git_map.commits, File.basename(path)).get
 
-      @timer = Timer.new(@mapper.commits, File.basename(path))
-      @commits_with_duration_by_date = @timer.process
-      @commits_with_duration_by_date.each do |date, commits|
+      @timer   = Timer.new(@git_map.commits, @actions, File.basename(path)).process
+
+      @timer.each do |date, commits|
         Log.new format('%-40s %-40s'.blue,
                        date,
                        "Total #{ChronicDuration.output commits.map(&:time_in_seconds).reduce(&:+)}"
                        )
         commits.each do |commit|
-          Log.new commit.message
-          # Log.new commit.to_s
-          # commit.files.each { |file| Log.new file.to_s }
+          # Log.new commit.message
+          Log.new commit.to_s
+          commit.files.each { |file| Log.new file.to_s }
         end
       end
     end
