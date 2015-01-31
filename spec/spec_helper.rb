@@ -17,3 +17,5 @@ end
 require "codeclimate-test-reporter"
 CodeClimate::TestReporter.start
 require 'webmock/rspec'
+
+WebMock.disable_net_connect!(:allow => "codeclimate.com")
