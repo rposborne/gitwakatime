@@ -19,7 +19,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_runtime_dependency 'git', '>= 0'
-  spec.add_runtime_dependency 'wakatime', '>= 0'
+  spec.add_runtime_dependency 'wakatime', '>= 0.0.2'
   spec.add_runtime_dependency 'logger', '>= 0'
   spec.add_runtime_dependency 'thor', '>= 0'
   spec.add_runtime_dependency 'chronic_duration', '>=0'
