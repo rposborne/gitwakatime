@@ -10,6 +10,7 @@ module GitWakaTime
         logs =  @git.log(commits).since(start_at).until(Date.today)
 
         @commits = logs.map do |git_commit|
+          next if git_commit.author.name != @git.config('user.name')
           Commit.new(@git, git_commit)
         end.compact
       end
