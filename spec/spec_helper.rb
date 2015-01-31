@@ -7,15 +7,33 @@
 RSpec.configure do |config|
   config.run_all_when_everything_filtered = true
   config.filter_run :focus
-
-  # Run specs in random order to surface order dependencies. If you find an
-  # order dependency and want to debug it, you can fix the order by providing
-  # the seed, which is printed after each run.
-  #     --seed 1234
   config.order = 'random'
+  config.before(:all) do
+    @wdir = set_file_paths
+  end
 end
 require 'codeclimate-test-reporter'
 CodeClimate::TestReporter.start
 require 'webmock/rspec'
 
 WebMock.disable_net_connect!(allow: 'codeclimate.com')
+
+def set_file_paths
+  @test_dir = File.join(File.dirname(__FILE__))
+  @wdir_dot = File.expand_path(File.join(@test_dir, 'dummy'))
+  @wdir = create_temp_repo(@wdir_dot)
+end
+
+def create_temp_repo(clone_path)
+  filename = 'git_test' + Time.now.to_i.to_s + rand(300).to_s.rjust(3, '0')
+  @tmp_path = File.join('/tmp/', filename)
+  FileUtils.mkdir_p(@tmp_path)
+  FileUtils.cp_r(clone_path, @tmp_path)
+  tmp_path = File.join(@tmp_path, 'dummy')
+  Dir.chdir(tmp_path) do
+    FileUtils.mv('dot_git', '.git')
+  end
+  tmp_path
+end
+
+
