@@ -1,7 +1,12 @@
 # GitWakaTime
 
-GitWakaTime is a mashup between data obtained through "wakatime" and the data we all create using git. 
+[![Build Status](https://travis-ci.org/rposborne/gitwakatime.svg?branch=master)](https://travis-ci.org/rposborne/gitwakatime)
+[![Gem Version](https://badge.fury.io/rb/gitwakatime.svg)](http://badge.fury.io/rb/gitwakatime)
+[![Code Climate](https://codeclimate.com/github/rposborne/gitwakatime/badges/gpa.svg)](https://codeclimate.com/github/rposborne/gitwakatime)
+GitWakaTime is a mashup between data obtained through "wakatime" and the data we all create using git.
 The prinicpal is to capture a baseline of activity for a task and answer the age old question "How much time did I spend on this?"
+
+
 
 ## Installation
 
@@ -12,11 +17,11 @@ Install the gem:
 ## Usage
 
     Creates a .gitwakatime.yml file on the user's home directory ~/.gitwakatime.yml which will contain your api keys
-    $ gitwakatime init 
+    $ gitwakatime init
 
     Process the current directory
 
-    $ gitwakatime tally 
+    $ gitwakatime tally
 
 ## Contributing
 
