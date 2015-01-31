@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'gitwakatime'
 
 describe 'description' do
-  let(:path) { File.join(File.dirname(__FILE__), 'dummy') }
+  let(:path) { File.expand_path(File.join(File.dirname(__FILE__), '..', '.git', 'modules', 'spec', 'dummy')) }
   let (:map) { GitWakaTime::Mapper.new(path) }
 
   before do

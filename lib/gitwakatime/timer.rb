@@ -51,8 +51,9 @@ module GitWakaTime
       # The file should be the same file as we expect
       # TODO: Might need to pass root_path down
       actions = actions.select do |action|
-        action['file'] == File.join(file.git.dir.path, file.name)
+        action['file'].include?(file.name)  # This is okay as other projects have already been purged
       end
+
       # If this file had an earlier commit ensure the actions timestamp
       # is after that commit
       if file.dependent_commit

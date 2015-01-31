@@ -3,7 +3,7 @@ require 'gitwakatime'
 require 'gitwakatime/mapper'
 
 describe 'description' do
-  let(:path) { File.join(File.dirname(__FILE__), 'dummy') }
+  let(:path) { File.expand_path(File.join(File.dirname(__FILE__), '..', '.git', 'modules', 'spec', 'dummy')) }
   it 'can be run on dummy' do
     expect(GitWakaTime::Mapper.new(path).commits.size).to eq 8 # 9ths is lonely
   end
