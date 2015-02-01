@@ -11,6 +11,10 @@ RSpec.configure do |config|
   config.before(:all) do
     @wdir = set_file_paths
   end
+
+  config.after(:all) do
+    FileUtils.rm_r(File.dirname(@wdir))
+  end
 end
 require 'codeclimate-test-reporter'
 CodeClimate::TestReporter.start
@@ -26,14 +30,13 @@ end
 
 def create_temp_repo(clone_path)
   filename = 'git_test' + Time.now.to_i.to_s + rand(300).to_s.rjust(3, '0')
-  @tmp_path = File.join('/tmp/', filename)
+  @tmp_path = File.expand_path(File.join(File.dirname(__FILE__), '..', 'tmp', filename))
   FileUtils.mkdir_p(@tmp_path)
   FileUtils.cp_r(clone_path, @tmp_path)
   tmp_path = File.join(@tmp_path, 'dummy')
   Dir.chdir(tmp_path) do
     FileUtils.mv('dot_git', '.git')
   end
+  puts tmp_path
   tmp_path
 end
-
-
