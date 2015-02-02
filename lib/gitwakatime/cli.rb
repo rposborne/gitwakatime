@@ -18,10 +18,10 @@ module  GitWakaTime
     method_option :file, aliases: '-f', default: '.'
 
     def init
+      api_key = ask('What is your wakatime api key? ( Get it here https://wakatime.com/settings):')
       say('Adding .wakatime.yml to home directory')
-
       create_file File.join(Dir.home, '.wakatime.yml') do
-        YAML.dump(api_key: 'Your API Key', last_commit: nil, log_level: :info)
+        YAML.dump(api_key: api_key, last_commit: nil, log_level: :info)
       end
     end
 
