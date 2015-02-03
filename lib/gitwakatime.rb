@@ -1,8 +1,6 @@
 require 'sequel'
 
 DB = Sequel.connect("sqlite://#{File.join(Dir.home, '.wakatime.sqlite')}")
-Sequel::Model.db = DB
-
 
 require 'gitwakatime/version'
 require 'gitwakatime/actions'

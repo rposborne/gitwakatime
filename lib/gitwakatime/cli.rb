@@ -26,6 +26,16 @@ module  GitWakaTime
           YAML.dump(api_key: api_key, last_commit: nil, log_level: :info)
         end
     end
+      reset
+    end
+
+    desc 'reset', 'Reset local sqlite db'
+    def reset
+      DB.disconnect
+
+      db_path = File.expand_path(File.join(Dir.home, '.wakatime.sqlite'))
+      FileUtils.rm_r(db_path) if File.exist?(db_path)
+      DB.connect("sqlite://#{db_path}")
       GitWakaTime.config.setup_local_db
     end
 
