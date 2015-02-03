@@ -25,6 +25,8 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'chronic_duration', '>=0'
   spec.add_runtime_dependency 'colorize'
   spec.add_runtime_dependency 'activesupport'
+  spec.add_runtime_dependency 'sequel'
+  spec.add_runtime_dependency 'sqlite3'
   spec.add_development_dependency('bundler', ['>= 0'])
   spec.add_development_dependency 'rake'
   spec.add_development_dependency 'rspec'

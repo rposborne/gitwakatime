@@ -2,7 +2,11 @@ require 'spec_helper'
 require 'gitwakatime'
 
 describe 'description' do
-  let (:map) { GitWakaTime::Mapper.new(@wdir) }
+  let (:git) { Git.open(@wdir) }
+  before(:each) do
+    GitWakaTime.config.git = git
+    GitWakaTime::Mapper.new
+  end
 
   before do
     stub_request(:get, 'https://wakatime.com/api/v1/actions')
@@ -12,7 +16,7 @@ describe 'description' do
 
   it 'can be run on dummy' do
 
-    timer = GitWakaTime::Query.new(map.commits, File.basename(@wdir)).get
+    timer = GitWakaTime::Query.new(GitWakaTime::Commit.all, File.basename(@wdir)).get
 
     expect(timer.size).to eq 6 # 9ths is lonely
     expect(timer).to be_a Array

@@ -1,3 +1,9 @@
+require 'sequel'
+
+DB = Sequel.connect("sqlite://#{File.join(Dir.home, '.wakatime.sqlite')}")
+Sequel::Model.db = DB
+
+
 require 'gitwakatime/version'
 require 'gitwakatime/actions'
 require 'gitwakatime/commit'
@@ -7,10 +13,11 @@ require 'gitwakatime/timer'
 require 'gitwakatime/log'
 require 'gitwakatime/commited_file'
 require 'gitwakatime/cli'
+
 # Silence is golden
 module GitWakaTime
   class Configuration
-    attr_accessor :api_key, :log_level, :root, :project
+    attr_accessor :api_key, :log_level, :root, :project, :git
 
     def initialize
       self.api_key = nil
@@ -22,6 +29,30 @@ module GitWakaTime
       self.api_key = yaml[:api_key]
       self.log_level = yaml[:log_level]
     end
+
+    def setup_local_db
+      DB.create_table :commits do
+        primary_key :id
+        String :sha
+        String :parent_sha
+        String :project
+        integer :time_in_seconds, default: 0
+        datetime :date
+        text :message
+        String :author
+      end
+
+      DB.create_table :commited_files do
+        primary_key :id
+        integer :commit_id
+        String :dependent_sha
+        DateTime :dependent_date
+        integer :time_in_seconds, default: 0
+        String :sha
+        String :name
+        String :project
+      end
+      end
   end
 
   def self.config

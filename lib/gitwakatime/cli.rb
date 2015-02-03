@@ -18,11 +18,15 @@ module  GitWakaTime
     method_option :file, aliases: '-f', default: '.'
 
     def init
-      api_key = ask('What is your wakatime api key? ( Get it here https://wakatime.com/settings):')
-      say('Adding .wakatime.yml to home directory')
-      create_file File.join(Dir.home, '.wakatime.yml') do
-        YAML.dump(api_key: api_key, last_commit: nil, log_level: :info)
-      end
+      unless File.exist?(File.join(Dir.home, '.wakatime.yml'))
+        api_key = ask('What is your wakatime api key? ( Get it here https://wakatime.com/settings):')
+        say('Adding .wakatime.yml to home directory')
+
+        create_file File.join(Dir.home, '.wakatime.yml') do
+          YAML.dump(api_key: api_key, last_commit: nil, log_level: :info)
+        end
+    end
+      GitWakaTime.config.setup_local_db
     end
 
     desc 'tally', 'Produce time spend for each commit and file in each commit'
@@ -33,20 +37,21 @@ module  GitWakaTime
       date = Date.parse(options.start_on) if options.start_on
       date = 1.month.ago.beginning_of_month unless options.start_on
       GitWakaTime.config.load_config_yaml
-      @git_map = Mapper.new(path, start_at: date)
-      @actions = Query.new(@git_map.commits, File.basename(path)).get
+      GitWakaTime.config.git = Git.open(path)
+      @git_map = Mapper.new(start_at: date)
+      @actions = Query.new(Commit.all, File.basename(path)).get
 
-      @timer   = Timer.new(@git_map.commits, @actions, File.basename(path)).process
+      @timer   = Timer.new(Commit.all, @actions, File.basename(path)).process
 
       @timer.each do |date, commits|
         Log.new format('%-40s %-40s'.blue,
                        date,
-                       "Total #{ChronicDuration.output commits.map(&:time_in_seconds).reduce(&:+)}"
+                       "Total #{ChronicDuration.output commits.map(&:time_in_seconds).compact.reduce(&:+).to_i}"
                        )
         commits.each do |commit|
           # Log.new commit.message
           Log.new commit.to_s
-          commit.files.each { |file| Log.new file.to_s }
+          commit.commited_files.each { |file| Log.new file.to_s }
         end
       end
     end

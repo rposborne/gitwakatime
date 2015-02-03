@@ -1,20 +1,24 @@
 require 'spec_helper'
-require 'gitwakatime'
-require 'gitwakatime/mapper'
 
 describe 'description' do
+  let (:git) { Git.open(@wdir) }
+  before(:each) do
+    GitWakaTime.config.git = git
+    GitWakaTime::Mapper.new
+  end
+
   it 'can be run on dummy' do
-    expect(GitWakaTime::Mapper.new(@wdir).commits.size).to eq 8 # 9ths is lonely
+    expect(GitWakaTime::Commit.all.size).to eq 8 # 9ths is lonely
   end
   it 'can be run on dummy' do
-    expect(GitWakaTime::Mapper.new(@wdir).commits.last.raw_commit.message).to eq 'created readme'
+    expect(GitWakaTime::Commit.order(:date).first.message).to eq 'created readme'
   end
 
   it 'maps files dependent commits' do
-    expect(GitWakaTime::Mapper.new(@wdir).commits.first.files.first.dependent_commit.sha).to eq 'dcd748bd06b8a0f239d779bee4f1eaf1f4aa500d'
+    expect(GitWakaTime::Commit.all.first.commited_files.first.dependent_sha).to eq 'dcd748bd06b8a0f239d779bee4f1eaf1f4aa500d'
   end
 
   it 'maps files dependent commits' do
-    expect(GitWakaTime::Mapper.new(@wdir).commits.select { |c| c.sha == 'dcd748bd06b8a0f239d779bee4f1eaf1f4aa500d' }.first.files.first.dependent_commit.sha).to eq '2254dd56976b5f32a2289438842e42a35a18ff86'
+    expect(GitWakaTime::Commit.all.select { |c| c.sha == 'dcd748bd06b8a0f239d779bee4f1eaf1f4aa500d' }.first.commited_files.first.dependent_sha).to eq '2254dd56976b5f32a2289438842e42a35a18ff86'
   end
 end

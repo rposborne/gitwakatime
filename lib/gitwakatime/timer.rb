@@ -18,7 +18,7 @@ module GitWakaTime
 
     def total_commited
       total_commited = ChronicDuration.output(@commits_with_duration
-                                               .map(&:time_in_seconds)
+                                               .map(&:time_in_seconds).compact
                                                .reduce(:+).to_f)
       Log.new "Total Commited Time #{total_commited} ".red
     end
@@ -26,14 +26,17 @@ module GitWakaTime
     def process
       @commits_with_duration = @commits.each do |commit|
 
-        if !commit.files.empty?
-          commit.files.each_with_index do |file, i|
+        if commit.commited_files.count > 0 || commit.parent_sha
+          commit.commited_files.each_with_index do |file, _i|
             time = sum_actions relevant_actions(commit, file)
-            commit.files[i].time_in_seconds += time
-            commit.time_in_seconds += time
+            file.time_in_seconds = time
+            commit.time_in_seconds = time
+
+            file.save
           end
+          commit.save
         else
-          # commit.time_in_seconds = sum_actions(actions_before(commit.date))
+          commit.time_in_seconds = sum_actions(actions_before(@actions_with_durations, commit.date))
         end
       end.compact
       total
@@ -45,25 +48,25 @@ module GitWakaTime
     private
 
     def relevant_actions(commit, file)
-      # The timestamps should be before the expected commit
-      actions = actions_before(commit.date)
-
       # The file should be the same file as we expect
       # TODO: Might need to pass root_path down
-      actions = actions.select do |action|
-        action['file'] == File.join(file.git.dir.path, file.name)
+      actions = @actions_with_durations.select do |action|
+        action['file'].include?(file.name)
       end
+
+      # The timestamps should be before the expected commit
+      actions = actions_before(actions, commit.date)
 
       # If this file had an earlier commit ensure the actions timestamp
       # is after that commit
-      if file.dependent_commit
-        actions = actions_after(actions, file.dependent_commit.date)
+      if file.dependent_date
+        actions = actions_after(actions, file.dependent_date)
       end
       actions
     end
 
-    def actions_before(date)
-      @actions_with_durations.select do |action|
+    def actions_before(actions, date)
+      actions.select do |action|
         Time.at(action['time']) <= date
       end
     end
@@ -76,7 +79,7 @@ module GitWakaTime
 
     def sum_actions(actions)
       actions.map { |action| action['duration'] }
-      .reduce(:+).to_f
+      .reduce(:+).to_i
     end
   end
 end

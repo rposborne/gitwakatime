@@ -37,6 +37,33 @@ def create_temp_repo(clone_path)
   Dir.chdir(tmp_path) do
     FileUtils.mv('dot_git', '.git')
   end
-  puts tmp_path
   tmp_path
+end
+
+db_path = File.expand_path File.join(File.dirname(__FILE__), '..', 'test.sqlite')
+FileUtils.rm_r(db_path) if File.exist?(db_path)
+
+require 'sequel'
+DB = Sequel.connect('sqlite://tmp/test.sqlite')
+Sequel::Model.db = DB
+DB.create_table :commits do
+  primary_key :id
+  String :sha
+  String :parent_sha
+  String :project
+  integer :time_in_seconds, default: 0
+  datetime :date
+  text :message
+  String :author
+end
+
+DB.create_table :commited_files do
+  primary_key :id
+  integer :commit_id
+  String :dependent_sha
+  DateTime :dependent_date
+  integer :time_in_seconds, default: 0
+  String :sha
+  String :name
+  String :project
 end

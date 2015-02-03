@@ -1,17 +1,10 @@
-module GitWakaTime
-  class Commit
-    attr_accessor :raw_commit, :sha, :date, :message, :files, :time_in_seconds, :git, :author
 
-    def initialize(git, commit, load_files = true)
-      @raw_commit      = commit
-      @sha             = @raw_commit.sha
-      @date            = @raw_commit.date
-      @message         = @raw_commit.message
-      @author          = @raw_commit.author
-      @time_in_seconds = 0
-      @git             = git
-      @load_files      = load_files
-      @files = get_files  if load_files
+module GitWakaTime
+  class Commit < Sequel::Model
+    # attr_accessor :raw_commit, :sha, :date, :message, :files, :time_in_seconds, :git, :author
+    one_to_many :commited_files
+    def after_create
+      get_files
     end
 
     def inspect
@@ -22,7 +15,7 @@ module GitWakaTime
       format('        %-8s %8s %-30s %-80s'.green,
              sha[0..8],
              date,
-             ChronicDuration.output(time_in_seconds),
+             ChronicDuration.output(time_in_seconds.to_i),
              message
              )
     end
@@ -34,11 +27,15 @@ module GitWakaTime
     private
 
     def get_files
+      @raw_commit = GitWakaTime.config.git.gcommit(sha)
       # TODO: Assume gap time to lookup time prior to first commit.
-      return [] unless @raw_commit.parent
-      @raw_commit.diff_parent.stats[:files].keys.map do |file|
-        CommitedFile.new(git: @git, commit: @raw_commit, name: file, dependent: false)
-      end
+      if @raw_commit.parent
+        update(parent_sha: @raw_commit.parent.sha)
+
+        @raw_commit.diff_parent.stats[:files].keys.map do |file|
+          CommitedFile.create(commit_id: id, name: file, sha: sha, project: project)
+        end
+    end
     end
   end
 end
