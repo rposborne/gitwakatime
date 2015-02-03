@@ -6,22 +6,23 @@ module GitWakaTime
       Log.new 'Mapping commits for dependent commits'
       time = Benchmark.realtime do
         g = GitWakaTime.config.git
+        project = File.basename(GitWakaTime.config.git.dir.path)
         logs =  g.log(commits).since(start_at).until(Date.today)
 
         @commits = logs.map do |c|
 
           next if c.author.name != g.config('user.name')
           Commit.find_or_create(
-             sha: c.sha
+             sha: c.sha,
+             project: project
              ).update(
              author: c.author.name,
              message: c.message,
-             project: File.basename(g.repo.to_s),
              date: c.date
             )
         end.compact
       end
-      Log.new "Map Completed took #{time}s with #{Commit.with_sql('SELECT COUNT(*) from commits').single_value}"
+      Log.new "Map Completed took #{time}s with #{Commit.count}"
     end
   end
 end
