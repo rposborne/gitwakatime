@@ -29,7 +29,7 @@ module GitWakaTime
     end
 
     def setup_local_db
-      DB.create_table :commits do
+      DB.create_table? :commits do
         primary_key :id
         String :sha
         String :parent_sha
@@ -40,7 +40,7 @@ module GitWakaTime
         String :author
       end
 
-      DB.create_table :commited_files do
+      DB.create_table? :commited_files do
         primary_key :id
         integer :commit_id
         String :dependent_sha
