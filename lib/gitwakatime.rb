@@ -1,7 +1,10 @@
 require 'sequel'
-
-DB = Sequel.connect("sqlite://#{File.join(Dir.home, '.wakatime.sqlite')}")
-
+if ENV['thor_env'] != 'test'
+  DB = Sequel.connect("sqlite://#{File.join(Dir.home, '.wakatime.sqlite')}")
+else
+  # Use a in memory db to have a nice clean testing bed.
+  DB = Sequel.sqlite
+end
 require 'gitwakatime/version'
 require 'gitwakatime/actions'
 require 'gitwakatime/commit'

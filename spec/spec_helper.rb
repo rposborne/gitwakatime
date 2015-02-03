@@ -4,13 +4,9 @@
 # loaded once.
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
+ENV['thor_env'] = 'test'
 
 require 'gitwakatime'
-
-# Use a in memory db to have a nice clean testing bed.
-DB.disconnect
-DB = Sequel.sqlite
-GitWakaTime.config.setup_local_db
 
 RSpec.configure do |config|
   config.run_all_when_everything_filtered = true
@@ -18,6 +14,14 @@ RSpec.configure do |config|
   config.order = 'random'
   config.before(:all) do
     @wdir = set_file_paths
+    GitWakaTime.config.setup_local_db
+    GitWakaTime::Commit.new.columns
+    GitWakaTime::CommitedFile.new.columns
+  end
+
+  config.before(:each) do
+    GitWakaTime::Commit.truncate
+    GitWakaTime::CommitedFile.truncate
   end
 
   config.after(:all) do
