@@ -1,14 +1,8 @@
-
 module GitWakaTime
   class Commit < Sequel::Model
-    # attr_accessor :raw_commit, :sha, :date, :message, :files, :time_in_seconds, :git, :author
     one_to_many :commited_files
     def after_create
       get_files
-    end
-
-    def inspect
-      [sha[0..8], time_in_seconds]
     end
 
     def to_s
@@ -33,9 +27,11 @@ module GitWakaTime
         update(parent_sha: @raw_commit.parent.sha)
 
         @raw_commit.diff_parent.stats[:files].keys.map do |file|
-          CommitedFile.create(commit_id: id, name: file, sha: sha, project: project)
+          CommitedFile.find_or_create(commit_id: id, name: file) do |c|
+            c.update(sha: sha, project: project)
+          end
         end
-    end
+      end
     end
   end
 end

@@ -32,7 +32,7 @@ module  GitWakaTime
           self.dependent_sha = commit.sha
 
           # This is the magically fix for the split tree issue
-          dc = CommitedFile.where(name: name, dependent_sha: commit.sha).first
+          dc = CommitedFile.where(name: name, dependent_sha: commit.sha).last
           dc.update(dependent_date: dc.commit.date) if dc && dc.commit
         end
 

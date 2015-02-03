@@ -9,17 +9,19 @@ module GitWakaTime
         project = File.basename(GitWakaTime.config.git.dir.path)
         logs =  g.log(commits).since(start_at).until(Date.today)
 
-        @commits = logs.map do |c|
+        @commits = logs.map do |git_c|
 
-          next if c.author.name != g.config('user.name')
+          next if git_c.author.name != g.config('user.name')
           Commit.find_or_create(
-             sha: c.sha,
+             sha: git_c.sha,
              project: project
-             ).update(
-             author: c.author.name,
-             message: c.message,
-             date: c.date
+             ) do |c|
+            c.update(
+             author: git_c.author.name,
+             message: git_c.message,
+             date: git_c.date
             )
+          end
         end.compact
       end
       Log.new "Map Completed took #{time}s with #{Commit.count}"
