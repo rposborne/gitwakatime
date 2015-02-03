@@ -5,11 +5,7 @@ module GitWakaTime
     def initialize(path, commits: 500, start_at: Date.today)
       Log.new 'Mapping commits for dependent commits'
       time = Benchmark.realtime do
-        @git = if File.directory?(File.join(path, '.git'))
-                 Git.open(path)
-        else
-          Git.bare(path)
-        end
+        @git = Git.open(path)
 
         logs =  @git.log(commits).since(start_at).until(Date.today)
 
