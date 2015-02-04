@@ -43,6 +43,7 @@ module  GitWakaTime
     method_option :file, aliases: '-f', default: '.'
     method_option :start_on, aliases: '-s', default: nil
     def tally
+      GitWakaTime.config.setup_local_db
       path, GitWakaTime.config.root = File.expand_path(options.file)
       date = Date.parse(options.start_on) if options.start_on
       date = 1.month.ago.beginning_of_month unless options.start_on

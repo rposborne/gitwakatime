@@ -18,11 +18,13 @@ RSpec.configure do |config|
     GitWakaTime.config.setup_local_db
     GitWakaTime::Commit.new.columns
     GitWakaTime::CommitedFile.new.columns
+    GitWakaTime::Action.new.columns
   end
 
   config.before(:each) do
     GitWakaTime::Commit.truncate
     GitWakaTime::CommitedFile.truncate
+    GitWakaTime::Action.truncate
 
     expect(GitWakaTime.config).to receive('user_name').and_return('Russell Osborne').at_least(:once)
   end

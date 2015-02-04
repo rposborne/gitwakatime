@@ -87,7 +87,7 @@ describe 'description' do
     expect(
         GitWakaTime::Commit.find(id: first_commit.id).commited_files.first.dependent_date.utc.to_s
       ).to eql('2015-01-30 03:25:08 UTC')
-    expect(second_commit.commited_files.first.dependent_date.utc.to_s).to eql(Time.at(1422570380).utc.to_s)
+    expect(second_commit.commited_files.first.dependent_date.utc.to_s).to eql(Time.at(1_422_570_380).utc.to_s)
   end
 
 end

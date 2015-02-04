@@ -51,7 +51,7 @@ module GitWakaTime
       # The file should be the same file as we expect
       # TODO: Might need to pass root_path down
       actions = @actions_with_durations.select do |action|
-        action['file'].include?(File.join(File.basename(GitWakaTime.config.git.dir.path), file.name))
+        action[:file].include?(File.join(File.basename(GitWakaTime.config.git.dir.path), file.name))
       end
 
       # The timestamps should be before the expected commit
@@ -67,18 +67,18 @@ module GitWakaTime
 
     def actions_before(actions, date)
       actions.select do |action|
-        Time.at(action['time']) <= date
+        Time.at(action[:time]) <= date
       end
     end
 
     def actions_after(actions, date)
       actions.select do |action|
-        Time.at(action['time']) >= date
+        Time.at(action[:time]) >= date
       end
     end
 
     def sum_actions(actions)
-      actions.map { |action| action['duration'] }
+      actions.map { |action| action[:duration] }
       .reduce(:+).to_i
     end
   end

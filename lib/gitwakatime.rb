@@ -5,8 +5,12 @@ else
   # Use a in memory db to have a nice clean testing bed.
   DB = Sequel.sqlite
 end
+
+DB.use_timestamp_timezones = false
+
 require 'gitwakatime/version'
-require 'gitwakatime/actions'
+require 'gitwakatime/durations'
+require 'gitwakatime/action'
 require 'gitwakatime/commit'
 require 'gitwakatime/mapper'
 require 'gitwakatime/query'
@@ -56,8 +60,21 @@ module GitWakaTime
         String :sha
         String :name
         String :project
+        index :dependent_sha
+        index :sha
       end
+
+      DB.create_table? :actions do
+        primary_key :id
+        String :uuid
+        DateTime :time
+        integer :duration, default: 0
+        String :file
+        String :branch
+        String :project
+        index :uuid, unique: true
       end
+    end
   end
 
   def self.config
