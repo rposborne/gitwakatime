@@ -28,12 +28,20 @@ module  GitWakaTime
         commit = commits[i]
 
         if commit && allowed_commit(commit)
+
           self.dependent_date = commit.date
           self.dependent_sha = commit.sha
 
-          # This is the magically fix for the split tree issue
-          dc = CommitedFile.where(name: name, dependent_sha: commit.sha).last
-          dc.update(dependent_date: dc.commit.date) if dc && dc.commit
+          # This is the magical fix for the split tree issue
+          # Current though is this will fail if more than 2 split tree files
+          split_tree_file = CommitedFile.where(name: name, dependent_sha: commit.sha).first
+          if split_tree_file && split_tree_file.commit
+            if self.commit.date < split_tree_file.commit.date
+              self.dependent_date = split_tree_file.commit.date
+           elsif self.commit.date > split_tree_file.commit.date
+              split_tree_file.update(dependent_date: commit.date)
+            end
+          end
         end
 
         i += 1
@@ -43,7 +51,7 @@ module  GitWakaTime
     def allowed_commit(commit)
       return false if commit.sha == sha
       return false if commit.author.name != GitWakaTime.config.user_name
-      return false if commit.message.include?('Merge branch')
+      return false if commit.parents.size > 1
       true
     end
 
