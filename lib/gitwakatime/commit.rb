@@ -18,6 +18,10 @@ module GitWakaTime
       @files.sort { |f| f.commit.date }.first
     end
 
+    def time_in_seconds
+      commited_files.collect {|f| f.time_in_seconds}.inject(:+)
+    end
+
     private
 
     def get_files
