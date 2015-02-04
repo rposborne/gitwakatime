@@ -26,12 +26,15 @@ module GitWakaTime
       commits = @commits.map(&:date)
       d_commits = CommitedFile.select(:dependent_date).all.map { |f| f.values[:dependent_date] }.compact
       timestamps = (commits + d_commits.flatten).uniq.sort
-      num_requests = (timestamps.last.to_date - timestamps.first.to_date) / @api_limit
+
+      # Always have a date range great than 1 as the num request will be 0/1 otherwise
+      num_requests = ((timestamps.last.to_date + 1) - timestamps.first.to_date) / @api_limit
       i = 0
+      
       request_params = num_requests.to_f.ceil.times.map do
 
         params = {
-          start: (timestamps.last.to_date + (i * @api_limit)).to_time.beginning_of_day,
+          start: (timestamps.first.to_date + (i * @api_limit)).to_time.beginning_of_day,
           end:  (timestamps.last.to_date + ((i + 1) * @api_limit)).to_time.end_of_day,
           project: @project
         }

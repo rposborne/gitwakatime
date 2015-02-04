@@ -14,13 +14,13 @@ describe 'description' do
   end
 
   it 'can be run on dummy' do
-    GitWakaTime::Mapper.new
+    GitWakaTime::Mapper.new(start_at: Date.new(2015, 1, 24))
 
-    timer = GitWakaTime::Query.new(GitWakaTime::Commit.all, File.basename(@wdir)).get
+    actions = GitWakaTime::Query.new(GitWakaTime::Commit.all, File.basename(@wdir)).get
 
-    expect(timer).to be_a Array
-    expect(timer.last).to be_a Wakatime::Models::Action
-    expect(timer.size).to eq 6 # 9ths is lonely
-    expect(timer.last.branch).to eq 'master'
+    expect(actions).to be_a Array
+    expect(actions.size).to eq 6 # 9ths is lonely
+    expect(actions.last).to be_a Wakatime::Models::Action
+    expect(actions.last.branch).to eq 'master'
   end
 end

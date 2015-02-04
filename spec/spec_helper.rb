@@ -23,8 +23,8 @@ RSpec.configure do |config|
   config.before(:each) do
     GitWakaTime::Commit.truncate
     GitWakaTime::CommitedFile.truncate
-    
-    expect(GitWakaTime.config).to receive('user_name').and_return("Russell Osborne").at_least(:once)
+
+    expect(GitWakaTime.config).to receive('user_name').and_return('Russell Osborne').at_least(:once)
   end
 
   config.after(:all) do

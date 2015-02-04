@@ -4,7 +4,7 @@ describe 'description' do
   let (:git) { Git.open(@wdir) }
   before(:each) do
     GitWakaTime.config.git = git
-    GitWakaTime::Mapper.new
+    GitWakaTime::Mapper.new(start_at: Date.new(2015, 1, 28))
   end
 
   it 'can be run on dummy' do

@@ -20,7 +20,7 @@ module GitWakaTime
       total_commited = ChronicDuration.output(@commits_with_duration
                                                .map(&:time_in_seconds).compact
                                                .reduce(:+).to_f)
-      Log.new "Total Commited Time #{total_commited} ".red
+      Log.new "Total Committed Time #{total_commited} ".red
     end
 
     def process
