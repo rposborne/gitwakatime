@@ -1,10 +1,10 @@
 require 'spec_helper'
 
 describe 'description' do
-  let (:git) { Git.open(@wdir) }
+  
   before(:each) do
-    GitWakaTime.config.git = git
-
+    GitWakaTime.config.git = Git.open(@wdir)
+    GitWakaTime::Mapper.new(start_at: Date.new(2015, 1, 24))
   end
 
   before do
@@ -14,7 +14,6 @@ describe 'description' do
   end
 
   it 'can be run on dummy' do
-    GitWakaTime::Mapper.new(start_at: Date.new(2015, 1, 24))
 
     actions = GitWakaTime::Query.new(GitWakaTime::Commit.all, File.basename(@wdir)).get
 
@@ -22,5 +21,12 @@ describe 'description' do
     expect(actions.size).to eq 6 # 9ths is lonely
     expect(actions.last).to be_a Wakatime::Models::Action
     expect(actions.last.branch).to eq 'master'
+  end
+  it 'produces valid search for api' do
+    actions = GitWakaTime::Query.new(GitWakaTime::Commit.all, File.basename(@wdir)).time_params
+
+    expect(actions).to be_a Array
+    expect(actions.first[:start].to_date).to eq Date.new(2015,01,30)
+    expect(actions.first[:end].to_date).to eq Date.new(2015,02,14)
   end
 end

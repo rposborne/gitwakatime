@@ -34,7 +34,7 @@ module GitWakaTime
       request_params = num_requests.to_f.ceil.times.map do
 
         params = {
-          start: (timestamps.first.to_date + (i * @api_limit)).to_time.beginning_of_day,
+          start: (timestamps.last.to_date + (i * @api_limit)).to_time.beginning_of_day,
           end:  (timestamps.last.to_date + ((i + 1) * @api_limit)).to_time.end_of_day,
           project: @project
         }
