@@ -22,8 +22,6 @@ module GitWakaTime
     end
 
     def actions
-      puts @start_at
-      puts @end_at
       Action.where('time >= ? and time <= ? ', @start_at, @end_at).where(project: @project)
     end
 
