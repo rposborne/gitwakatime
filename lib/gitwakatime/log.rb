@@ -7,6 +7,7 @@ module GitWakaTime
     end
 
     def print_message
+      return if ENV['waka_log'] == 'false'
       if @color.nil?
         puts @msg
       else

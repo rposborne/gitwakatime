@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'gitwakatime'
 
 describe 'description' do
   let (:git) { Git.open(@wdir) }
