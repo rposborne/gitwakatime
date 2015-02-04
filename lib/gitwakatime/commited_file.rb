@@ -42,7 +42,7 @@ module  GitWakaTime
 
     def allowed_commit(commit)
       return false if commit.sha == sha
-      return false if commit.author.name != GitWakaTime.config.git.config('user.name')
+      return false if commit.author.name != GitWakaTime.config.user_name
       return false if commit.message.include?('Merge branch')
       true
     end

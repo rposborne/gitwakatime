@@ -1,4 +1,8 @@
 language: ruby
 rvm:
-  - 2.2.0
+  - 2.1.2
 script: bundle exec rake spec
+
+addons:
+  code_climate:
+    repo_token: 214446b5fc4f8697cc9ccc3ab1f2612c2e083ea1e71266648319663719cf85b9

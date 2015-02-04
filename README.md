@@ -4,10 +4,8 @@
 [![Gem Version](https://badge.fury.io/rb/gitwakatime.svg)](http://badge.fury.io/rb/gitwakatime)
 [![Code Climate](https://codeclimate.com/github/rposborne/gitwakatime/badges/gpa.svg)](https://codeclimate.com/github/rposborne/gitwakatime)
 
-GitWakaTime is a mashup between data obtained through "wakatime" and the data we all create using git.
-The prinicpal is to capture a baseline of activity for a task and answer the age old question "How much time did I spend on this?"
-
-
+GitWakaTime is a mash up between data obtained through "wakatime" and the data we all create using git.
+The principal is to capture a baseline of activity for a task and answer the age old question "How much time did I spend on this?" or "What is the minimum amount I can charge for my time"
 
 ## Installation
 
@@ -15,14 +13,20 @@ Install the gem:
 
     $ gem install gitwakatime
 
-## Usage
+    Run the setup command: (you will need your wakatime api key). Creates a .gitwakatime.yml file on the user's home directory ~/.gitwakatime.yml which will contain your api keys
 
-    Creates a .gitwakatime.yml file on the user's home directory ~/.gitwakatime.yml which will contain your api keys
     $ gitwakatime init
 
+
+## Usage
     Process the current directory
 
     $ gitwakatime tally
+
+    Hard reset of the local cache database
+
+    $ gitwakatime reset
+
 
 ## Output
     Total Recorded time 21 hrs 59 mins 59 secs

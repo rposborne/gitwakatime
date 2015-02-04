@@ -25,6 +25,10 @@ module GitWakaTime
       self.log_level = :info
     end
 
+    def user_name
+      GitWakaTime.config.git.config('user.name')
+    end
+
     def load_config_yaml
       yaml = YAML.load_file(File.join(Dir.home, '.wakatime.yml'))
       self.api_key = yaml[:api_key]
