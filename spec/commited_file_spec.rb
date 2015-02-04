@@ -20,6 +20,7 @@ describe 'description' do
     )
 
     expect(first_commit.commited_files.first.dependent_sha).to eql('4c1ea35f9a811a0ef79da15ec85f25fce4c446ba')
+    expect(first_commit.commited_files.first.dependent_date.to_s).to eql('2015-01-29 22:25:08 -0500')
 
     second_commit = GitWakaTime::Commit.find_or_create(
        sha: 'd642b3c04c3025655a9c33e32b9d530696dcf7cc',
@@ -30,8 +31,9 @@ describe 'description' do
       )
 
     expect(second_commit.commited_files.first.dependent_sha).to eql('4c1ea35f9a811a0ef79da15ec85f25fce4c446ba')
-
-    expect(first_commit.commited_files.first.dependent_date.to_s).to eql('2015-01-29 22:26:05 -0500')
+    expect(
+        GitWakaTime::Commit.find(id: first_commit.id).commited_files.first.dependent_date.to_s
+      ).to eql('2015-01-29 22:26:05 -0500')
   end
 
 end
