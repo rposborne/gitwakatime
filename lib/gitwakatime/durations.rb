@@ -13,7 +13,7 @@ module GitWakaTime
     end
 
     def load_actions
-      unless cached?(@args)
+      unless cached?
 
         Log.new "querying WakaTime actions for #{@project}"
         time = Benchmark.realtime do
@@ -27,7 +27,7 @@ module GitWakaTime
 
         Log.new "API took #{time}s"
         persist_actions_localy(@actions)
-    end 
+      end
       true
     end
 
@@ -44,17 +44,24 @@ module GitWakaTime
       end
     end
 
-    def cached?(params)
+    def cached?
       # Check to see if this date range might be stale?
-      max_local_timetamp = Action.max(:time)
-      max_local_timetamp = (Time.parse(max_local_timetamp) + 3.day).to_date if max_local_timetamp
-      !(params[:start].to_date..params[:end].to_date).include?(max_local_timetamp) if max_local_timetamp
+      if cached_actions.count > 0
+        max_local_timetamp = (Time.parse(cached_actions.max(:time)) + 3.day).to_date
+        !(@args[:start].to_date..@args[:end].to_date).include?(max_local_timetamp)
+      else
+        false
+      end
+    end
+
+    def cached_actions
+      Action.where('time >= ?',@args[:end]).where(project: @project)
     end
 
     def actions_to_durations(_project = nil, timeout = 15)
       durations = []
       current = nil
-      
+
       @actions.each do | action |
         # the first action just sets state and does nothing
         unless current.nil?

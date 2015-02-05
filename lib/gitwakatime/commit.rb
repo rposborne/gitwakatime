@@ -19,7 +19,7 @@ module GitWakaTime
     end
 
     def time_in_seconds
-      commited_files.collect {|f| f.time_in_seconds}.inject(:+)
+      commited_files.map(&:time_in_seconds).inject(:+)
     end
 
     private

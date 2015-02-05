@@ -7,7 +7,7 @@ module GitWakaTime
   class Query
     def initialize(commits, project, _path = nil)
       @commits   = commits
-      @api_limit = 15
+      @api_limit = 35
       @project   = project
       @requests   = time_params
     end
