@@ -46,13 +46,13 @@ module  GitWakaTime
       GitWakaTime.config.setup_local_db
       path, GitWakaTime.config.root = File.expand_path(options.file)
       date = Date.parse(options.start_on) if options.start_on
-      date = 1.month.ago.beginning_of_month unless options.start_on
+      date = 7.days.ago unless options.start_on
       GitWakaTime.config.load_config_yaml
       GitWakaTime.config.git = Git.open(path)
       @git_map = Mapper.new(start_at: date)
-      @actions = Query.new(Commit.all, File.basename(path)).get
+      @actions = Query.new(Commit.where('date > ?', date).all, File.basename(path)).get
 
-      @timer   = Timer.new(Commit.all, @actions, File.basename(path)).process
+      @timer   = Timer.new(Commit.where('date > ?', date).all, @actions, File.basename(path)).process
 
       @timer.each do |date, commits|
         Log.new format('%-40s %-40s'.blue,
