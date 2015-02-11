@@ -50,9 +50,11 @@ module  GitWakaTime
       GitWakaTime.config.load_config_yaml
       GitWakaTime.config.git = Git.open(path)
       @git_map = Mapper.new(start_at: date)
-      @actions = Query.new(Commit.where('date > ?', date).all, File.basename(path)).get
+      @project = File.basename(GitWakaTime.config.git.dir.path)
+      @relevant_commits = Commit.where('date > ? and project = ?', date, @project).all
+      @actions = Query.new(@relevant_commits, File.basename(path)).get
 
-      @timer   = Timer.new(Commit.where('date > ?', date).all, @actions, File.basename(path)).process
+      @timer   = Timer.new(@relevant_commits, @actions, File.basename(path)).process
 
       @timer.each do |date, commits|
         Log.new format('%-40s %-40s'.blue,
