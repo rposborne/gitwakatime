@@ -32,16 +32,15 @@ module GitWakaTime
     end
 
     def persist_actions_localy(actions)
-      actions.each do |action|
-
-        Action.find_or_create(uuid: action['id']) do |c|
+      sterile_actions = actions.map do |action|
           action['uuid'] = action['id']
           action['time'] = Time.at(action['time'])
           action.delete('id')
-          c.update(action)
-        end
-
+          Action.find_or_create(uuid: action['uuid']) do |a|
+            a.update(action)
+          end
       end
+      
     end
 
     def cached?
