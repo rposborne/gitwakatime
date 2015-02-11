@@ -39,6 +39,11 @@ Hard reset of the local cache database, if you are getting odd numbers
 
     $ gitwakatime reset
 
+## Assumptions
+
+There a currently a few limitations with this model
+    
+* Merges are free, (no time is attributed a merge).  This is true for most merges but conflict resolution will be attributed to git parent commit of that file for that merge. 
 
 ## Output
     Total Recorded time 1 day 9 hrs 13 mins 32 secs
