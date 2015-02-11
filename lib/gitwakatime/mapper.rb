@@ -19,7 +19,7 @@ module GitWakaTime
             c.update(
              author: git_c.author.name,
              message: git_c.message,
-             date: git_c.date
+             date: git_c.date.utc
             )
           end
         end.compact
