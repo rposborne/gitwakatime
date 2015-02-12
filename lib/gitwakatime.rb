@@ -6,6 +6,7 @@ else
   DB = Sequel.sqlite
 end
 
+Sequel::Model.plugin :json_serializer
 DB.use_timestamp_timezones = false
 
 require 'gitwakatime/version'
@@ -17,6 +18,7 @@ require 'gitwakatime/query'
 require 'gitwakatime/timer'
 require 'gitwakatime/log'
 require 'gitwakatime/commited_file'
+require 'gitwakatime/controller'
 require 'gitwakatime/cli'
 
 # Silence is golden

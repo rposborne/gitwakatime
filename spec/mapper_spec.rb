@@ -4,11 +4,11 @@ describe 'description' do
   let (:git) { Git.open(@wdir) }
   before(:each) do
     GitWakaTime.config.git = git
-    GitWakaTime::Mapper.new(start_at: Date.new(2015, 1, 28))
+    GitWakaTime::Mapper.new(start_at: Date.new(2015, 1, 25))
   end
 
   it 'can be run on dummy' do
-    expect(GitWakaTime::Commit.all.size).to eq 8 # 9ths is lonely
+    expect(GitWakaTime::Commit.all.size).to eq 7 # 9ths is lonely
   end
   it 'can be run on dummy' do
     expect(GitWakaTime::Commit.order(:date).first.message).to eq 'created readme'

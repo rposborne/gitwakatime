@@ -8,7 +8,7 @@ require 'active_support/core_ext/date/calculations'
 require 'active_support/core_ext/date_and_time/calculations'
 require 'active_support/core_ext/integer/time'
 require 'active_support/core_ext/time'
-
+require 'pry'
 module  GitWakaTime
   # Provides two CLI actions init and tally
   class Cli < Thor
@@ -25,7 +25,7 @@ module  GitWakaTime
         create_file File.join(Dir.home, '.wakatime.yml') do
           YAML.dump(api_key: api_key, last_commit: nil, log_level: :info)
         end
-    end
+      end
       reset
     end
 
@@ -42,30 +42,29 @@ module  GitWakaTime
     desc 'tally', 'Produce time spend for each commit and file in each commit'
     method_option :file, aliases: '-f', default: '.'
     method_option :start_on, aliases: '-s', default: nil
+    method_option :output, aliases: '-o', default: 'text', type: 'string'
+
     def tally
-      GitWakaTime.config.setup_local_db
-      path, GitWakaTime.config.root = File.expand_path(options.file)
+      path = File.expand_path(options.file)
       date = Date.parse(options.start_on) if options.start_on
       date = 7.days.ago unless options.start_on
-      GitWakaTime.config.load_config_yaml
-      GitWakaTime.config.git = Git.open(path)
-      @git_map = Mapper.new(start_at: date)
-      @project = File.basename(GitWakaTime.config.git.dir.path)
-      @relevant_commits = Commit.where('date > ? and project = ?', date, @project).all
-      @actions = Query.new(@relevant_commits, File.basename(path)).get
 
-      @timer   = Timer.new(@relevant_commits, @actions, File.basename(path)).process
+      @timer = GitWakaTime::Controller.new(path: path, date: date).timer
 
-      @timer.each do |date, commits|
-        Log.new format('%-40s %-40s'.blue,
-                       date,
-                       "Total #{ChronicDuration.output commits.map(&:time_in_seconds).compact.reduce(&:+).to_i}"
-                       )
-        commits.each do |commit|
-          # Log.new commit.message
-          Log.new commit.to_s
-          commit.commited_files.each { |file| Log.new file.to_s }
+      if output == 'text'
+        @timer.each do |date, commits|
+          Log.new format('%-40s %-40s'.blue,
+                         date,
+                         "Total #{ChronicDuration.output commits.map(&:time_in_seconds).compact.reduce(&:+).to_i}"
+                         )
+          commits.each do |commit|
+            # Log.new commit.message
+            Log.new commit.to_s
+            commit.commited_files.each { |file| Log.new file.to_s }
+          end
         end
+      elsif output == 'json'
+        @timer.to_json
       end
     end
   end
