@@ -27,7 +27,7 @@ Process the current directory for the past 7 days
 
     $ gitwakatime tally
 
-Process the current directory from a given point  (this will still load all actions data to prevent providing incorrect timing at the start point)
+Process the current directory from a given point  (this will still load all heartbeats data to prevent providing incorrect timing at the start point)
 
     $ gitwakatime tally -s 2014-02-01
 
@@ -62,10 +62,10 @@ There a currently a few limitations with this model
                             4949d899a            4 mins 47 secs                           spec/query_spec.rb
                             4949d899a            1 min 49 secs                            spec/spec_helper.rb
                             ea23d7dd7            3 mins 3 secs                            spec/timer_spec.rb
-            30415f0a3 2015-02-04 11:54:18 -0500 1 hr 30 mins 17 secs           Cache Actions locally, in sqlite.
+            30415f0a3 2015-02-04 11:54:18 -0500 1 hr 30 mins 17 secs           Cache Heartbeats locally, in sqlite.
                             093f9e4d5            4 mins 19 secs                           lib/gitwakatime.rb
-                                                 25 secs                                  lib/gitwakatime/action.rb
-                            caf409884            7 mins 45 secs                           lib/gitwakatime/actions.rb
+                                                 25 secs                                  lib/gitwakatime/heartbeat.rb
+                            caf409884            7 mins 45 secs                           lib/gitwakatime/heartbeats.rb
                             331723757            1 min 39 secs                            lib/gitwakatime/cli.rb
                                                  46 mins 2 secs                           lib/gitwakatime/durations.rb
                             b1cd1d09c            23 mins 50 secs                          lib/gitwakatime/query.rb

@@ -5,28 +5,31 @@ describe 'description' do
   before(:each) do
     GitWakaTime.config.git = Git.open(@wdir)
     GitWakaTime::Mapper.new(start_at: Date.new(2015, 1, 24))
+    @commits = GitWakaTime::Commit
+    @files   = GitWakaTime::CommitedFile
+    @query = GitWakaTime::Query.new(@commits, @files, File.basename(@wdir))
   end
 
   before do
-    stub_request(:get, 'https://wakatime.com/api/v1/actions')
+    stub_request(:get, 'https://wakatime.com/api/v1/heartbeats')
     .with(query: hash_including(:start, :end))
-    .to_return(body: File.read('./spec/fixtures/actions.json'), status: 200)
+    .to_return(body: File.read('./spec/fixtures/heartbeats.json'), status: 200)
   end
 
   it 'can be run on dummy' do
+    heartbeats = @query.get
 
-    actions = GitWakaTime::Query.new(GitWakaTime::Commit.all, File.basename(@wdir)).get
-
-    expect(actions).to be_a Array
-    expect(actions.size).to eq 6 # 9ths is lonely
-    expect(actions.last).to be_a GitWakaTime::Action
-    expect(actions.last.branch).to eq 'master'
+    expect(heartbeats).to be_a Array
+    expect(heartbeats.size).to eq 9 # 10ths is lonely
+    expect(heartbeats.last).to be_a GitWakaTime::Heartbeat
+    expect(heartbeats.last.branch).to eq 'master'
   end
   it 'produces valid search for api' do
-    actions = GitWakaTime::Query.new(GitWakaTime::Commit.all, File.basename(@wdir)).time_params
 
-    expect(actions).to be_a Array
-    expect(actions.first[:start].to_date).to eq Date.new(2015, 01, 30)
-    expect(actions.first[:end].to_date).to eq Date.new(2015, 02, 14)
+    heartbeats = @query.build_requests
+
+    expect(heartbeats).to be_a Array
+    expect(heartbeats.first[:start].to_date).to eq Date.new(2015, 01, 29)
+    expect(heartbeats.first[:end].to_date).to eq Date.new(2015, 03, 05)
   end
 end

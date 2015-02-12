@@ -10,7 +10,7 @@ require 'active_support/core_ext/integer/time'
 require 'active_support/core_ext/time'
 require 'pry'
 module  GitWakaTime
-  # Provides two CLI actions init and tally
+  # Provides two CLI heartbeats init and tally
   class Cli < Thor
     include Thor::Actions
     desc 'init', 'Setups up Project for using the wakatime API
@@ -41,30 +41,42 @@ module  GitWakaTime
 
     desc 'tally', 'Produce time spend for each commit and file in each commit'
     method_option :file, aliases: '-f', default: '.'
-    method_option :start_on, aliases: '-s', default: nil
+    method_option :start_on, aliases: '-s', default: 7.days.ago.to_s
     method_option :output, aliases: '-o', default: 'text', type: 'string'
 
     def tally
-      path = File.expand_path(options.file)
-      date = Date.parse(options.start_on) if options.start_on
-      date = 7.days.ago unless options.start_on
+      date = Date.parse(options.start_on)
 
-      @timer = GitWakaTime::Controller.new(path: path, date: date).timer
+      @timer = GitWakaTime::Controller.new(
+        path: File.expand_path(options.file), date: date
+      ).timer
 
-      if output == 'text'
-        @timer.each do |date, commits|
-          Log.new format('%-40s %-40s'.blue,
-                         date,
-                         "Total #{ChronicDuration.output commits.map(&:time_in_seconds).compact.reduce(&:+).to_i}"
-                         )
-          commits.each do |commit|
-            # Log.new commit.message
-            Log.new commit.to_s
-            commit.commited_files.each { |file| Log.new file.to_s }
+      print_output(@timer)
+    end
+
+    no_commands do
+      def print_output(timer)
+        if output == 'text'
+          timer.each do |c_date, commits|
+            print_commit(c_date, commits)
           end
+        elsif output == 'json'
+          @timer.to_json
         end
-      elsif output == 'json'
-        @timer.to_json
+      end
+
+      def print_commit
+        sum_c_time = commits.map(&:time_in_seconds).compact.reduce(&:+).to_i
+        Log.new format(
+          '%-40s %-40s'.blue,
+          c_date,
+          "Total #{ChronicDuration.output sum_c_time }"
+        )
+        commits.each do |commit|
+          # Log.new commit.message
+          Log.new commit.to_s
+          commit.commited_files.each { |file| Log.new file.to_s }
+        end
       end
     end
   end

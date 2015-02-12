@@ -1,90 +1,93 @@
 module GitWakaTime
-  # Extract Duration Data from Actions for the WAKATIME API
+  # Extract Duration Data from Heartbeats for the WAKATIME API
   class Durations
-    attr_accessor :actions
+    attr_accessor :heartbeats
     def initialize(args)
-      return @actions = args[:actions] if args[:actions]
+      return @heartbeats = args[:heartbeats] if args[:heartbeats]
       fail if args[:project].nil?
       @project = args[:project]
       @args = args
       @session     = Wakatime::Session.new(api_key: GitWakaTime.config.api_key)
       @client      = Wakatime::Client.new(@session)
-      @actions = []
+      @heartbeats = []
     end
 
-    def load_actions
+    def load_heartbeats
       unless cached?
 
-        Log.new "querying WakaTime actions for #{@project}"
+        Log.new "querying WakaTime heartbeats for #{@project}"
         time = Benchmark.realtime do
-          @actions = @client.actions(@args)
+          @heartbeats = @client.heartbeats(@args)
 
-          # remove returned actions that do not have the project we want
-          @actions =  @actions.keep_if do  |a|
+          # remove returned heartbeats that do not have the project we want
+          @heartbeats =  @heartbeats.keep_if do  |a|
             a['project'] == @project
           end
         end
 
         Log.new "API took #{time}s"
-        persist_actions_localy(@actions)
+        persist_heartbeats_localy(@heartbeats)
       end
       true
     end
 
-    def persist_actions_localy(actions)
-      sterile_actions = actions.map do |action|
-          action['uuid'] = action['id']
-          action['time'] = Time.at(action['time'])
-          action.delete('id')
-          Action.find_or_create(uuid: action['uuid']) do |a|
-            a.update(action)
-          end
+    def persist_heartbeats_localy(heartbeats)
+      heartbeats.map do |heartbeat|
+        heartbeat['uuid'] = heartbeat['id']
+        heartbeat['time'] = Time.at(heartbeat['time'])
+        heartbeat.delete('id')
+        Heartbeat.find_or_create(uuid: heartbeat['uuid']) do |a|
+          a.update(heartbeat)
+        end
       end
-      
     end
 
     def cached?
       # Check to see if this date range might be stale?
-      if cached_actions.count > 0
-        max_local_timetamp = (Time.parse(cached_actions.max(:time)) + 3.day).to_date
-        !(@args[:start].to_date..@args[:end].to_date).include?(max_local_timetamp)
+      if cached_heartbeats.count > 0
+        max_local_timetamp = (
+          Time.parse(cached_heartbeats.max(:time)) + 3.day
+        ).to_date
+        !(
+          @args[:start].to_date..@args[:end].to_date
+        ).include?(max_local_timetamp)
       else
         false
       end
     end
 
-    def cached_actions
-      Action.where('time >= ?',@args[:end]).where(project: @project)
+    def cached_heartbeats
+      Heartbeat.where('time >= ?', @args[:end]).where(project: @project)
     end
 
-    def actions_to_durations(_project = nil, timeout = 15)
+    def heartbeats_to_durations(_project = nil, timeout = 15)
       durations = []
       current = nil
 
-      @actions.each do | action |
-        # the first action just sets state and does nothing
+      @heartbeats.each do | heartbeat |
+        # the first heartbeat just sets state and does nothing
         unless current.nil?
 
-          # get duration since last action
-          duration = action.time.round - current.time.round
+          # get duration since last heartbeat
+          duration = heartbeat.time.round - current.time.round
 
           duration = 0.0 if duration < 0
 
           # duration not logged if greater than the timeout
           if duration < timeout * 60
 
-            # add duration to current action
+            # add duration to current heartbeat
             current.duration = duration
 
             # save to local db
             current.save
 
-            # log current action as a duration
+            # log current heartbeat as a duration
             durations << current
           end
         end
         # set state (re-start the clock)
-        current = action
+        current = heartbeat
 
       end
       durations

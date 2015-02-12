@@ -1,5 +1,6 @@
 require 'spec_helper'
-# * commit a4c26aeb79acb1f012201fe96e4d68e8d17c75d9 (HEAD, origin/master, origin/HEAD, master)
+# * commit a4c26aeb79acb1f012201fe96e4d68e8d17c75d9
+# | (HEAD, origin/master, origin/HEAD, master)
 # | Author: rpo <rother@gmail.com>
 # | Date:   Sat Jan 31 15:49:07 2015 -0500
 # |
@@ -54,7 +55,7 @@ require 'spec_helper'
 
 #       created readme
 describe 'description' do
-  let (:git) { Git.open(@wdir) }
+  let(:git) { Git.open(@wdir) }
 
   before do
     GitWakaTime::Commit.dataset.destroy
@@ -65,29 +66,48 @@ describe 'description' do
     GitWakaTime.config.git = git
 
     first_commit = GitWakaTime::Commit.find_or_create(
-    sha: 'e493d6f2ab2a702fa7f9c168b852a3b44c524f08',
-    author: 'Russell Osborne',
-    message: 'conflicting commit on blah.',
-    project: git.repo.to_s,
-    date: Time.at(1_422_570_380)
+      sha: 'e493d6f2ab2a702fa7f9c168b852a3b44c524f08',
+      author: 'Russell Osborne',
+      message: 'conflicting commit on blah.',
+      project: git.repo.to_s,
+      date: DateTime.parse('Thu Jan 29 22:26:20 2015 -0500').utc
     )
 
-    expect(first_commit.commited_files.first.dependent_sha).to eql('4c1ea35f9a811a0ef79da15ec85f25fce4c446ba')
-    expect(first_commit.commited_files.first.dependent_date.utc.to_s).to eql('2015-01-30 03:25:08 UTC')
+    expect(
+      first_commit.commited_files.first.dependent_sha
+    ).to eql(
+      '4c1ea35f9a811a0ef79da15ec85f25fce4c446ba'
+    )
+    expect(
+      first_commit.commited_files.first.dependent_date.utc.to_s
+    ).to eql(
+      '2015-01-30 03:25:08 UTC'
+    )
 
     second_commit = GitWakaTime::Commit.find_or_create(
-       sha: 'd642b3c04c3025655a9c33e32b9d530696dcf7cc',
-       author: 'Russell Osborne',
-       message: 'conflicting commit on master.',
-       project:  git.repo.to_s,
-       date: 'Thu Jan 29 22:26:05 2015 -0500'
-      )
+      sha: 'd642b3c04c3025655a9c33e32b9d530696dcf7cc',
+      author: 'Russell Osborne',
+      message: 'conflicting commit on master.',
+      project:  git.repo.to_s,
+      date: DateTime.parse('Thu Jan 29 22:26:05 2015 -0500').utc
+    )
 
-    expect(second_commit.commited_files.first.dependent_sha).to eql('4c1ea35f9a811a0ef79da15ec85f25fce4c446ba')
+    # Verify that we have a split tree, both commit 1 and two should depend on
+    # 4c1ea
     expect(
-        GitWakaTime::Commit.find(id: first_commit.id).commited_files.first.dependent_date.utc.to_s
-      ).to eql('2015-01-30 03:25:08 UTC')
-    expect(second_commit.commited_files.first.dependent_date.utc.to_s).to eql(Time.at(1_422_570_380).utc.to_s)
+      second_commit.commited_files.first.dependent_sha
+    ).to eql('4c1ea35f9a811a0ef79da15ec85f25fce4c446ba')
+
+    expect(
+      GitWakaTime::Commit.find(id: first_commit.id)
+      .commited_files.first.dependent_date.utc.to_s
+    ).to eql('2015-01-30 03:25:08 UTC')
+
+    # Second commit should depend on first commit not actual depedent time as
+    # it would duplicate time
+    expect(
+      second_commit.commited_files.first.dependent_date.utc.to_s
+    ).to eql(Time.parse('Thu Jan 29 22:26:20 2015 -0500').utc.to_s)
   end
 
 end

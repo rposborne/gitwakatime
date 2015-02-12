@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'description' do
-  # let (:git) { Git.open(@wdir) }
+  # let(:git) { Git.open(@wdir) }
   before(:each) do
     # GitWakaTime.config.git = git
     # GitWakaTime::Mapper.new(start_at: Date.new(2015, 1, 28))
@@ -11,7 +11,7 @@ describe 'description' do
     pending
   end
 
-  it 'calculates durations of actions' do
+  it 'calculates durations of heartbeats' do
     pending
   end
 

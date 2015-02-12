@@ -1,8 +1,11 @@
 module GitWakaTime
+  ##
+  # Cache git commit and correlate it's children
+  #
   class Commit < Sequel::Model
     one_to_many :commited_files
     def after_create
-      get_files
+      extract_changed_files
     end
 
     def to_s
@@ -24,16 +27,15 @@ module GitWakaTime
 
     private
 
-    def get_files
+    def extract_changed_files
       @raw_commit = GitWakaTime.config.git.gcommit(sha)
       # TODO: Assume gap time to lookup time prior to first commit.
-      if @raw_commit.parent
-        update(parent_sha: @raw_commit.parent.sha)
+      return unless @raw_commit.parent
+      update(parent_sha: @raw_commit.parent.sha)
 
-        @raw_commit.diff_parent.stats[:files].keys.map do |file|
-          CommitedFile.find_or_create(commit_id: id, name: file) do |c|
-            c.update(sha: sha, project: project)
-          end
+      @raw_commit.diff_parent.stats[:files].keys.map do |file|
+        CommitedFile.find_or_create(commit_id: id, name: file) do |c|
+          c.update(sha: sha, project: project)
         end
       end
     end

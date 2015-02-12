@@ -1,4 +1,6 @@
 module GitWakaTime
+  ##
+  # Pretty output, and ability to silence in testing
   class Log
     def initialize(msg, color = nil)
       @color = color

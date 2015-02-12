@@ -11,7 +11,7 @@ DB.use_timestamp_timezones = false
 
 require 'gitwakatime/version'
 require 'gitwakatime/durations'
-require 'gitwakatime/action'
+require 'gitwakatime/heartbeat'
 require 'gitwakatime/commit'
 require 'gitwakatime/mapper'
 require 'gitwakatime/query'
@@ -21,8 +21,11 @@ require 'gitwakatime/commited_file'
 require 'gitwakatime/controller'
 require 'gitwakatime/cli'
 
-# Silence is golden
+# It's a module :)
 module GitWakaTime
+  ##
+  # Stores primary config and project information
+  # Currently not thread safe.
   class Configuration
     attr_accessor :api_key, :log_level, :root, :project, :git
 
@@ -42,6 +45,12 @@ module GitWakaTime
     end
 
     def setup_local_db
+      create_commits_table
+      create_commited_files_table
+      create_heartbeats_table
+    end
+
+    def create_commits_table
       DB.create_table? :commits do
         primary_key :id
         String :sha
@@ -52,7 +61,9 @@ module GitWakaTime
         text :message
         String :author
       end
+    end
 
+    def create_commited_files_table
       DB.create_table? :commited_files do
         primary_key :id
         integer :commit_id
@@ -65,8 +76,10 @@ module GitWakaTime
         index :dependent_sha
         index :sha
       end
+    end
 
-      DB.create_table? :actions do
+    def create_heartbeats_table
+      DB.create_table? :heartbeats do
         primary_key :id
         String :uuid
         DateTime :time

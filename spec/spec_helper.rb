@@ -18,15 +18,17 @@ RSpec.configure do |config|
     GitWakaTime.config.setup_local_db
     GitWakaTime::Commit.new.columns
     GitWakaTime::CommitedFile.new.columns
-    GitWakaTime::Action.new.columns
+    GitWakaTime::Heartbeat.new.columns
   end
 
   config.before(:each) do
     GitWakaTime::Commit.truncate
     GitWakaTime::CommitedFile.truncate
-    GitWakaTime::Action.truncate
+    GitWakaTime::Heartbeat.truncate
 
-    expect(GitWakaTime.config).to receive('user_name').and_return('Russell Osborne').at_least(:once)
+    expect(
+      GitWakaTime.config
+    ).to receive('user_name').and_return('Russell Osborne').at_least(:once)
   end
 
   config.after(:all) do
@@ -47,12 +49,18 @@ end
 
 def create_temp_repo(clone_path)
   filename = 'git_test' + Time.now.to_i.to_s + rand(300).to_s.rjust(3, '0')
-  @tmp_path = File.expand_path(File.join(File.dirname(__FILE__), '..', 'tmp', filename))
+  @tmp_path = File.expand_path(
+    File.join(File.dirname(__FILE__), '..', 'tmp', filename)
+  )
   FileUtils.mkdir_p(@tmp_path)
   FileUtils.cp_r(clone_path, @tmp_path)
   tmp_path = File.join(@tmp_path, 'dummy')
-  Dir.chdir(tmp_path) do
+  activate_repo_as_git(tmp_path)
+  tmp_path
+end
+
+def activate_repo_as_git(path)
+  Dir.chdir(path) do
     FileUtils.mv('dot_git', '.git')
   end
-  tmp_path
 end
