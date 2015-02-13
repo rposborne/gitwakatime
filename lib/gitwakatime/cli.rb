@@ -51,21 +51,21 @@ module  GitWakaTime
         path: File.expand_path(options.file), date: date
       ).timer
 
-      print_output(@timer)
+      print_output(@timer, format: options.output)
     end
 
     no_commands do
-      def print_output(timer)
-        if output == 'text'
+      def print_output(timer, format: 'text')
+        if format == 'text'
           timer.each do |c_date, commits|
             print_commit(c_date, commits)
           end
-        elsif output == 'json'
+        elsif format == 'json'
           @timer.to_json
         end
       end
 
-      def print_commit
+      def print_commit(c_date, commits)
         sum_c_time = commits.map(&:time_in_seconds).compact.reduce(&:+).to_i
         Log.new format(
           '%-40s %-40s'.blue,
