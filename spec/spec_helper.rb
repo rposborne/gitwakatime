@@ -41,6 +41,19 @@ require 'webmock/rspec'
 
 WebMock.disable_net_connect!(allow: 'codeclimate.com')
 
+def capture(stream)
+  begin
+    stream = stream.to_s
+    eval "$#{stream} = StringIO.new"
+    yield
+    result = eval("$#{stream}").string
+  ensure
+    eval("$#{stream} = #{stream.upcase}")
+  end
+
+  result
+end
+
 def set_file_paths
   @test_dir = File.join(File.dirname(__FILE__))
   @wdir_dot = File.expand_path(File.join(@test_dir, 'dummy'))
