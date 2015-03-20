@@ -70,7 +70,7 @@ module GitWakaTime
         start: (
           @start_at.to_date + (i * @api_limit)
         ).to_time.beginning_of_day,
-        end:  (@start_at.to_date + ((i + 1) * @api_limit)).to_time.end_of_day,
+        end:  (@start_at.to_date + (i * @api_limit)).to_time.end_of_day,
         project: @project,
         show: 'file,branch,project,time,id'
       }
