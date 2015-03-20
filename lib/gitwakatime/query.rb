@@ -8,7 +8,7 @@ module GitWakaTime
     def initialize(commits, files, project, _path = nil)
       @commits   = commits
       @files = files
-      @api_limit = 35
+      @api_limit = 1
       @project   = project
       @requests   = build_requests
     end
