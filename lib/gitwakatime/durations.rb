@@ -44,17 +44,16 @@ module GitWakaTime
 
     def cached?
       # Check to see if this date range might be stale?
-      # if cached_heartbeats.count > 0
-      #   max_local_timetamp = (
-      #     Time.parse(cached_heartbeats.max(:time)) + 15.day
-      #   ).to_date
-      #   !(
-      #     @args[:start].to_date..@args[:end].to_date
-      #   ).include?(max_local_timetamp)
-      # else
-      #   false
-      # end
-      false
+      if cached_heartbeats.count > 0
+        max_local_timetamp = (
+          Time.parse(cached_heartbeats.max(:time)) + 15.day
+        ).to_date
+        !(
+          @args[:start].to_date..@args[:end].to_date
+        ).include?(max_local_timetamp)
+      else
+        false
+      end
     end
 
     def cached_heartbeats
