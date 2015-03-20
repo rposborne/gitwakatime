@@ -19,8 +19,9 @@ module GitWakaTime
       timestamps = (commits + d_commits.flatten).uniq.sort
 
       # Don't query before the Wakatime Epoch
-      @start_at = if timestamps.first >= Time.new(2013, 5, 1)
-                    timestamps.first
+      first_commit_at = timestamps.first
+      @start_at = if first_commit_at && first_commit_at >= Time.new(2013, 5, 1)
+                    first_commit_at
                   else
                     Time.new(2013, 5, 1)
                   end

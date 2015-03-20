@@ -25,18 +25,16 @@ module  GitWakaTime
     # out of commits to check
     def find_dependent_commit(name, i = 1)
       commits = load_dependent_commits(name)
-      loop do
+      begin
         commit = commits[i]
-        break if commit.nil?
 
-        next unless allowed_commit(commit)
+        if commit && allowed_commit(commit)
+          set dependent_sha: commit.sha, dependent_date: commit.date
+          check_and_correct_split_tree(commit)
+        end
 
-        set dependent_sha: commit.sha, dependent_date: commit.date
-
-        check_and_correct_split_tree(commit)
         i += 1
-        break unless dependent_sha.blank?
-      end
+      end until !dependent_sha.nil? || commit.nil?
     end
 
     def check_and_correct_split_tree(commit)
