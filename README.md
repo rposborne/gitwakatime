@@ -4,10 +4,10 @@
 [![Gem Version](https://badge.fury.io/rb/gitwakatime.svg)](http://badge.fury.io/rb/gitwakatime)
 [![Code Climate](https://codeclimate.com/github/rposborne/gitwakatime/badges/gpa.svg)](https://codeclimate.com/github/rposborne/gitwakatime)
 
-GitWakaTime is a mash up between data obtained through "(Wakatime)[https://wakatime.com]" and the data we all create using git.
+GitWakaTime is a mash up between data obtained through "[Wakatime](https://wakatime.com)" and the data we all create using git.
 The principal is to capture a baseline of activity for a task and answer the age old question "How much time did I spend on this?" or "What is the minimum amount I can charge for my time".
 
-This implementation varies form (Wakatime's)[https://wakatime.com/#features] commit feature as it compares time spent on each file, vs comparing the time between commits.  It tends to be significantly more accurate for those who do per line commits. Read more about it (here)[http://burningpony.com/2015/02/that-feature-took-how-long/] 
+This implementation varies form [Wakatime's](https://wakatime.com/#features) commit feature as it compares time spent on each file, vs comparing the time between commits.  It tends to be significantly more accurate for those who do per line commits. Read more about it (here)[http://burningpony.com/2015/02/that-feature-took-how-long/]
 
 ## Installation
 
@@ -15,7 +15,7 @@ Install the gem:
 
     $ gem install gitwakatime
 
-Run the setup command: (you will need your wakatime api key)[https://wakatime.com/settings]
+Run the setup command: [you will need your wakatime api key](https://wakatime.com/settings)
 
     $ gitwakatime init
 
