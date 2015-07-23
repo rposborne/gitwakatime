@@ -11,7 +11,7 @@ describe 'description' do
   end
 
   before do
-    stub_request(:get, 'https://wakatime.com/api/v1/heartbeats')
+    stub_request(:get, 'wakatime.com/api/v1/heartbeats')
     .with(query: hash_including(:start, :end))
     .to_return(body: File.read('./spec/fixtures/heartbeats.json'), status: 200)
   end

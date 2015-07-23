@@ -72,6 +72,7 @@ module GitWakaTime
         integer :time_in_seconds, default: 0
         String :sha
         String :name
+        String :entity
         String :project
         index :dependent_sha
         index :sha
@@ -84,7 +85,8 @@ module GitWakaTime
         String :uuid
         DateTime :time
         integer :duration, default: 0
-        String :file
+        String :entity
+        String :type
         String :branch
         String :project
         index :uuid, unique: true

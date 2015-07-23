@@ -52,7 +52,7 @@ module GitWakaTime
       # The file should be the same file as we expect
       # TODO: Might need to pass root_path down
       heartbeats = @heartbeats_with_durations.select do |heartbeat|
-        heartbeat[:file].include?(
+        heartbeat[:entity].include?(
           File.join(File.basename(GitWakaTime.config.git.dir.path), file.name)
         )
       end
