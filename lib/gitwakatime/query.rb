@@ -31,7 +31,7 @@ module GitWakaTime
     def get
       @requests.each do |params|
         Log.new "Gettting heartbeats
-         #{params[:start].to_date} to #{params[:end].to_date}".red
+         #{params[:date].to_date}".red
         Durations.new(params).load_heartbeats
       end
 
@@ -67,10 +67,7 @@ module GitWakaTime
 
     def construct_params(i)
       {
-        start: (
-          @start_at.to_date + (i * @api_limit)
-        ).to_time.beginning_of_day,
-        end:  (@start_at.to_date + (i * @api_limit)).to_time.end_of_day,
+        date: @start_at.to_date,
         project: @project,
         show: 'file,branch,project,time,id'
       }

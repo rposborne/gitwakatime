@@ -5,7 +5,7 @@ describe 'description' do
 
   before do
     stub_request(:get, 'https://wakatime.com/api/v1/heartbeats')
-    .with(query: hash_including(:start, :end))
+    .with(query: hash_including(:date))
     .to_return(body: File.read('./spec/fixtures/heartbeats.json'), status: 200)
   end
 

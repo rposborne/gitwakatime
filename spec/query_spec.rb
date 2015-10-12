@@ -12,7 +12,7 @@ describe 'description' do
 
   before do
     stub_request(:get, 'wakatime.com/api/v1/heartbeats')
-    .with(query: hash_including(:start, :end))
+    .with(query: hash_including(:date))
     .to_return(body: File.read('./spec/fixtures/heartbeats.json'), status: 200)
   end
 
@@ -29,7 +29,7 @@ describe 'description' do
     heartbeats = @query.build_requests
 
     expect(heartbeats).to be_a Array
-    expect(heartbeats.first[:start].to_date).to eq Date.new(2015, 01, 29)
-    expect(heartbeats.first[:end].to_date).to eq Date.new(2015, 03, 05)
+    expect(heartbeats.first[:date].to_date).to eq Date.new(2015, 01, 29)
+
   end
 end
