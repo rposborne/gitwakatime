@@ -5,10 +5,12 @@ require 'active_support/core_ext/time'
 module GitWakaTime
   # Integrates the nested hash from mapper with heartbeats api
   class Query
-    def initialize(commits, files, project, _path = nil)
+    def initialize(commits, files, project, start_at: nil, end_at: nil)
+      @start_at = start_at
+      @end_at = end_at
       @commits   = commits
       @files = files
-      @api_limit = 1
+      @api_limit = 1 # API ONLY ACCEPTS 1 day
       @project   = project
       @requests   = build_requests
     end
@@ -48,7 +50,7 @@ module GitWakaTime
     end
 
     def build_requests
-      time_range
+      time_range unless !@end_at.nil? and !@start_at.nil?
 
       # Always have a date range great than 1 as the num request
       # will be 0/1 otherwise
@@ -67,7 +69,7 @@ module GitWakaTime
 
     def construct_params(i)
       {
-        date: @start_at.to_date,
+        date: (@start_at.to_date + i ),
         project: @project,
         show: 'file,branch,project,time,id'
       }

@@ -1,6 +1,6 @@
 require 'sequel'
 if ENV['thor_env'] != 'test'
-  DB = Sequel.connect("sqlite://#{File.join(Dir.home, '.wakatime.sqlite')}")
+  DB = Sequel.connect("sqlite://#{File.join(Dir.home, '.wakatime.sqlite')}", :loggers => [Logger.new($stdout)])
 else
   # Use a in memory db to have a nice clean testing bed.
   DB = Sequel.sqlite

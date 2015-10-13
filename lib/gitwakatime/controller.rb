@@ -24,7 +24,7 @@ module GitWakaTime
 
     def timer
       Timer.new(
-        @relevant_commits.all, @heartbeats, File.basename(@path)
+        @relevant_commits.all, Heartbeat
       ).process
     end
   end

@@ -5,10 +5,9 @@ require 'active_support/core_ext/time'
 module GitWakaTime
   # Integrates the nested hash from mapper with heartbeats api
   class Timer
-    def initialize(commits, heartbeats_with_durations, project)
+    def initialize(commits, heartbeats_with_durations)
       @commits = commits
       @heartbeats_with_durations   = heartbeats_with_durations
-      @project   = project
     end
 
     def total
@@ -51,11 +50,7 @@ module GitWakaTime
     def relevant_heartbeats(commit, file)
       # The file should be the same file as we expect
       # TODO: Might need to pass root_path down
-      heartbeats = @heartbeats_with_durations.select do |heartbeat|
-        heartbeat[:entity].include?(
-          File.join(File.basename(GitWakaTime.config.git.dir.path), file.name)
-        )
-      end
+      heartbeats = @heartbeats_with_durations.grep(:entity ,"%#{file.name}%")
 
       # The timestamps should be before the expected commit
       heartbeats = heartbeats_before(heartbeats, commit.date)
@@ -69,20 +64,19 @@ module GitWakaTime
     end
 
     def heartbeats_before(heartbeats, date)
-      heartbeats.select do |heartbeat|
-        Time.at(heartbeat[:time]) <= date
-      end
+      heartbeats.where("time <= ? ", date)
     end
 
+
+
     def heartbeats_after(heartbeats, date)
-      heartbeats.select do |heartbeat|
-        Time.at(heartbeat[:time]) >= date
-      end
+      heartbeats.where("time >= ? ", date)
     end
 
     def sum_heartbeats(heartbeats)
-      heartbeats.map { |heartbeat| heartbeat[:duration] }
-      .reduce(:+).to_i
+      heartbeats.sum(:duration)
     end
   end
 end
+
+

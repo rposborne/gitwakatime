@@ -16,7 +16,7 @@ describe 'description' do
       GitWakaTime::Commit, GitWakaTime::CommitedFile, File.basename(@wdir)
     ).get
     timer = GitWakaTime::Timer.new(
-      GitWakaTime::Commit.all, heartbeats, File.basename(@wdir)
+      GitWakaTime::Commit.all, heartbeats
     ).process
 
     # # UTC breaks heartbeats of 1 day

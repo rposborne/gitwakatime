@@ -22,7 +22,7 @@ module GitWakaTime
     end
 
     def time_in_seconds
-      commited_files.map(&:time_in_seconds).inject(:+)
+      commited_files.map(&:time_in_seconds).compact.inject(:+)
     end
 
     private
