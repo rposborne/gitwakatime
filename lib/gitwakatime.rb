@@ -16,6 +16,7 @@ require 'gitwakatime/heartbeat'
 require 'gitwakatime/commit'
 require 'gitwakatime/mapper'
 require 'gitwakatime/query'
+require 'gitwakatime/request_builder'
 require 'gitwakatime/timer'
 require 'gitwakatime/log'
 require 'gitwakatime/commited_file'
@@ -96,7 +97,7 @@ module GitWakaTime
   end
 
   def self.config
-    @configuration ||=  Configuration.new
+    @configuration ||= Configuration.new
   end
 
   def self.configure

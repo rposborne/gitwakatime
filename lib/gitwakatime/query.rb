@@ -8,13 +8,14 @@ module GitWakaTime
     def initialize(commits, files, project, start_at: nil, end_at: nil)
       @start_at = start_at
       @end_at = end_at
-      @commits   = commits
+      @commits = commits
       @files = files
-      @api_limit = 1 # API ONLY ACCEPTS 1 day
       @project   = project
-      @requests   = build_requests
+      time_range unless !@end_at.nil? && !@start_at.nil?
+      @requests = RequestBuilder.new(@start_at, @end_at, project).call
     end
 
+    # TODO: Refactor this into own class
     def time_range
       commits    = @commits.select_map(:date).sort
       d_commits  = @files.select_map(:dependent_date).compact.sort
@@ -27,13 +28,13 @@ module GitWakaTime
                   else
                     Time.new(2013, 5, 1)
                   end
-      @end_at = timestamps.last
+      @end_at = timestamps.last || Time.now
     end
 
     def get
       @requests.each do |params|
         Log.new "Gettting heartbeats
-         #{params[:date].to_date}".red
+         #{params[:date]}".red
         Durations.new(params).load_heartbeats
       end
 
@@ -47,32 +48,6 @@ module GitWakaTime
       Heartbeat.where(
         'time >= ? and time <= ? ', @start_at, @end_at
       ).where(project: @project)
-    end
-
-    def build_requests
-      time_range unless !@end_at.nil? and !@start_at.nil?
-
-      # Always have a date range great than 1 as the num request
-      # will be 0/1 otherwise
-      num_requests = ((@end_at.to_date + 1) - @start_at.to_date) / @api_limit
-      i = 0
-
-      request_params = num_requests.to_f.ceil.times.map do
-
-        params = construct_params(i)
-        i += 1
-        params
-
-      end
-      request_params
-    end
-
-    def construct_params(i)
-      {
-        date: (@start_at.to_date + i ),
-        project: @project,
-        show: 'file,branch,project,time,id'
-      }
     end
   end
 end

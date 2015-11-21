@@ -49,7 +49,6 @@ module GitWakaTime
 
     def relevant_heartbeats(commit, file)
       # The file should be the same file as we expect
-      # TODO: Might need to pass root_path down
       heartbeats = @heartbeats_with_durations.grep(:entity ,"%#{file.name}%")
 
       # The timestamps should be before the expected commit

@@ -1,0 +1,37 @@
+module GitWakaTime
+  # Build an array of hash's (params) that can be iterated over for the
+  # wakatime API.
+  class RequestBuilder
+    API_LIMIT = 1 # API ONLY ACCEPTS 1 day
+
+    def initialize(start_at, end_at, project)
+      @start_at = start_at.to_date
+      @end_at = end_at.to_date
+      @project = project
+    end
+
+    def call
+      # Always have a date range great than 1 as the num request
+      # will be 0/1 otherwise
+      num_requests = ((@end_at + 1) - @start_at) / API_LIMIT
+      i = 0
+
+      request_params = num_requests.to_f.ceil.times.map do
+        params = construct_params(i)
+        i += 1
+        params
+      end
+      request_params
+    end
+
+    private
+
+    def construct_params(i)
+      {
+        date: (@start_at.to_date + i).to_date,
+        project: @project,
+        show: 'file,branch,project,time,id'
+      }
+    end
+  end
+end

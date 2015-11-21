@@ -4,9 +4,9 @@ describe 'description' do
   let(:git) { Git.open(@wdir) }
 
   before do
-    stub_request(:get, 'https://wakatime.com/api/v1/heartbeats')
-    .with(query: hash_including(:date))
-    .to_return(body: File.read('./spec/fixtures/heartbeats.json'), status: 200)
+    stub_request(:get, /.*wakatime.com\/api\/v1\/heartbeats/)
+      .with(query: hash_including(:date))
+      .to_return(body: File.read('./spec/fixtures/heartbeats.json'), status: 200)
   end
 
   it 'can be run on dummy' do

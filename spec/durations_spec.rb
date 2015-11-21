@@ -1,18 +1,19 @@
 require 'spec_helper'
 
-describe 'description' do
-  # let(:git) { Git.open(@wdir) }
-  before(:each) do
-    # GitWakaTime.config.git = git
-    # GitWakaTime::Mapper.new(start_at: Date.new(2015, 1, 28))
+describe GitWakaTime::Durations do
+  subject(:subject) { described_class.new({ date: Time.now }) }
+  describe 'caching'
+  it 'when db empty be falsey' do
+    expect(subject.cached?).to eq(false)
   end
 
-  it 'checks cached state' do
-    pending
+  describe 'when heartbeats present' do
+    before do
+      expect(GitWakaTime::Heartbeat).to receive(:max).with(:time)
+        .and_return(Time.now.to_s)
+    end
+    it 'when db empty be falsey' do
+      expect(subject.cached?).to eq(false)
+    end
   end
-
-  it 'calculates durations of heartbeats' do
-    pending
-  end
-
 end
