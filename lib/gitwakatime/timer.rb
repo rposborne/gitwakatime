@@ -7,12 +7,12 @@ module GitWakaTime
   class Timer
     def initialize(commits, heartbeats_with_durations)
       @commits = commits
-      @heartbeats_with_durations   = heartbeats_with_durations
+      @heartbeats_with_durations = heartbeats_with_durations
     end
 
     def total
       total_time = sum_heartbeats @heartbeats_with_durations
-      Log.new "Total Recorded time #{ChronicDuration.output total_time}", :red
+      Log.new "Total Recorded time #{ChronicDuration.output total_time.to_f}", :red
     end
 
     def total_commited
@@ -24,7 +24,6 @@ module GitWakaTime
 
     def process
       @commits_with_duration = @commits.each do |commit|
-
         if commit.commited_files.count > 0 || commit.parent_sha
           commit.commited_files.each_with_index do |file, _i|
             time = sum_heartbeats relevant_heartbeats(commit, file)
@@ -49,7 +48,7 @@ module GitWakaTime
 
     def relevant_heartbeats(commit, file)
       # The file should be the same file as we expect
-      heartbeats = @heartbeats_with_durations.grep(:entity ,"%#{file.name}%")
+      heartbeats = @heartbeats_with_durations.grep(:entity, "%#{file.name}%")
 
       # The timestamps should be before the expected commit
       heartbeats = heartbeats_before(heartbeats, commit.date)
@@ -63,13 +62,11 @@ module GitWakaTime
     end
 
     def heartbeats_before(heartbeats, date)
-      heartbeats.where("time <= ? ", date)
+      heartbeats.where('time <= ? ', date)
     end
 
-
-
     def heartbeats_after(heartbeats, date)
-      heartbeats.where("time >= ? ", date)
+      heartbeats.where('time >= ? ', date)
     end
 
     def sum_heartbeats(heartbeats)

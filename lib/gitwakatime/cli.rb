@@ -70,7 +70,7 @@ module  GitWakaTime
         Log.new format(
           '%-40s %-40s'.blue,
           c_date,
-          "Total #{ChronicDuration.output sum_c_time }"
+          "Total #{ChronicDuration.output sum_c_time}"
         )
         commits.each do |commit|
           # Log.new commit.message

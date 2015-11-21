@@ -5,7 +5,7 @@ module GitWakaTime
   class Commit < Sequel::Model
     one_to_many :commited_files
     def after_create
-      extract_changed_files
+      extract_changed_files if GitWakaTime.config.git
     end
 
     def to_s
@@ -14,7 +14,7 @@ module GitWakaTime
              date,
              ChronicDuration.output(time_in_seconds.to_i),
              message
-             )
+            )
     end
 
     def oldest_dependent

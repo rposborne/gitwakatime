@@ -13,13 +13,13 @@ module GitWakaTime
           next if git_c.author.name != GitWakaTime.config.user_name
           next if git_c.parents.size > 1
           Commit.find_or_create(
-             sha: git_c.sha,
-             project: project
-             ) do |c|
+            sha: git_c.sha,
+            project: project
+          ) do |c|
             c.update(
-             author: git_c.author.name,
-             message: git_c.message,
-             date: git_c.date.utc
+              author: git_c.author.name,
+              message: git_c.message,
+              date: git_c.date.utc
             )
           end
         end.compact

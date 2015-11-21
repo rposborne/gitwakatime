@@ -109,5 +109,4 @@ describe 'description' do
       second_commit.commited_files.first.dependent_date.utc.to_s
     ).to eql(Time.parse('Thu Jan 29 22:26:20 2015 -0500').utc.to_s)
   end
-
 end

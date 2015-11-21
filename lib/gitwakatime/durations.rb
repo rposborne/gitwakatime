@@ -13,7 +13,7 @@ module GitWakaTime
     def load_heartbeats
       unless cached?
 
-        Log.new "querying WakaTime heartbeats"
+        Log.new 'querying WakaTime heartbeats'
         time = Benchmark.realtime do
           @heartbeats = @client.heartbeats(@args)
         end
@@ -40,19 +40,19 @@ module GitWakaTime
     def cached?
       max_local_timetamp = Heartbeat.max(:time)
       return false if max_local_timetamp.nil?
-      @max_local_timetamp ||= ( Time.parse(max_local_timetamp) )
+      @max_local_timetamp ||= (Time.parse(max_local_timetamp))
 
       @args[:date].to_date < @max_local_timetamp.to_date
     end
 
     def cached_heartbeats
-       Heartbeat.where("DATE(time) == ?", @args[:date]).order(Sequel.asc(:time))
+      Heartbeat.where('DATE(time) == ?', @args[:date]).order(Sequel.asc(:time))
     end
 
     def heartbeats_to_durations(timeout = 15)
       durations = []
       current = nil
-      @heartbeats.each do | heartbeat |
+      @heartbeats.each do |heartbeat|
         # the first heartbeat just sets state and does nothing
         unless current.nil?
 
@@ -60,7 +60,6 @@ module GitWakaTime
           duration = heartbeat.time.round - current.time.round
 
           duration = 0.0 if duration < 0
-
 
           # duration not logged if greater than the timeout
           if duration < timeout * 60
@@ -77,7 +76,6 @@ module GitWakaTime
         end
         # set state (re-start the clock)
         current = heartbeat
-
       end
       durations
     end

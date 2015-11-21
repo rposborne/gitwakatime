@@ -8,7 +8,7 @@ module  GitWakaTime
     # means a split tree, and we should split time between the two, or
     # more, commits.
     def before_create
-      find_dependent_commit(name)
+      find_dependent_commit(name) if GitWakaTime.config.git
     end
 
     def to_s
@@ -16,7 +16,7 @@ module  GitWakaTime
              (dependent_sha[0..8] if dependent_sha),
              ChronicDuration.output(time_in_seconds.to_f),
              name
-             )
+            )
     end
 
     private
