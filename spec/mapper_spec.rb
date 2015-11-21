@@ -26,9 +26,9 @@ describe 'description' do
 
   it 'maps files dependent commits' do
     expect(
-      GitWakaTime::Commit.all.select do |c|
+      GitWakaTime::Commit.all.find do |c|
         c.sha == 'dcd748bd06b8a0f239d779bee4f1eaf1f4aa500d'
-      end.first.commited_files.first.dependent_sha
+      end.commited_files.first.dependent_sha
     ).to eq '2254dd56976b5f32a2289438842e42a35a18ff86'
   end
 end

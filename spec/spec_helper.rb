@@ -5,7 +5,7 @@
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 ENV['thor_env'] = 'test'
-ENV['waka_log'] = 'false'
+ENV['waka_log'] = 'true'
 require 'codeclimate-test-reporter'
 CodeClimate::TestReporter.start
 
@@ -41,19 +41,6 @@ end
 require 'webmock/rspec'
 
 WebMock.disable_net_connect!(allow: 'codeclimate.com')
-
-def capture(stream)
-  begin
-    stream = stream.to_s
-    eval "$#{stream} = StringIO.new"
-    yield
-    result = eval("$#{stream}").string
-  ensure
-    eval("$#{stream} = #{stream.upcase}")
-  end
-
-  result
-end
 
 def set_file_paths
   @test_dir = File.join(File.dirname(__FILE__))

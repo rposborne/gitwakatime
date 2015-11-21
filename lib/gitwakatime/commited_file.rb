@@ -25,7 +25,7 @@ module  GitWakaTime
     # out of commits to check
     def find_dependent_commit(name, i = 1)
       commits = load_dependent_commits(name)
-      begin
+      loop do
         commit = commits[i]
 
         if commit && allowed_commit(commit)
@@ -34,7 +34,8 @@ module  GitWakaTime
         end
 
         i += 1
-      end until !dependent_sha.nil? || commit.nil?
+        break if !dependent_sha.nil? || commit.nil?
+      end
     end
 
     def check_and_correct_split_tree(commit)

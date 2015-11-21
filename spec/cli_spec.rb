@@ -8,7 +8,7 @@ describe GitWakaTime::Cli do
   end
   it 'should be able to be called' do
     ARGV.replace %w[tally --start_on 2012-01-01 --file] << @wdir.to_s
-    expect(capture(:stdout) { GitWakaTime::Cli.start }).to eq ''
+    expect { GitWakaTime::Cli.start }.to output.to_stdout
     # puts GitWakaTime::Cli.start('tally', "--file #{@wdir.to_s}")
   end
 end
