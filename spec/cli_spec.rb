@@ -6,6 +6,8 @@ describe GitWakaTime::Cli do
     stub_request(:get, /wakatime\.com/)
     .with(query: hash_including(:date))
     .to_return(body: File.read('./spec/fixtures/heartbeats.json'), status: 200)
+
+    expect(YAML).to receive(:load_file).with(File.expand_path('~/.wakatime.yml')).and_return(YAML.load_file('./spec/fixtures/wakatime.yml'))
   end
 
   after do
