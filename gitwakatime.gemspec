@@ -20,15 +20,9 @@ Gem::Specification.new do |s|
   s.executables = s.files.grep(/^bin\//) { |f| File.basename(f) }
 
   s.require_paths = ['lib']
-  s.authors = ['Bozhidar Batsov', 'Jonas Arvidsson', 'Yuji Nakayama']
-  s.description = <<-EOF
-    Automatic Ruby code style checking tool.
-    Aims to enforce the community-driven Ruby Style Guide.
-  EOF
-
+  s.authors = ['Russell Osborne']
   s.add_runtime_dependency 'git', '>= 1.2.9.1'
   s.add_runtime_dependency 'wakatime', '>= 0.0.2'
-  s.add_runtime_dependency 'logger', '>= 0'
   s.add_runtime_dependency 'thor', '>= 0'
   s.add_runtime_dependency 'chronic_duration', '>=0'
   s.add_runtime_dependency 'colorize'
