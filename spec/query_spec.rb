@@ -23,10 +23,4 @@ describe 'description' do
     expect(heartbeats.last).to be_a GitWakaTime::Heartbeat
     expect(heartbeats.last.branch).to eq 'master'
   end
-  it 'produces valid search for api' do
-    heartbeats = @query.build_requests
-
-    expect(heartbeats).to be_a Array
-    expect(heartbeats.first[:date].to_date).to eq Date.new(2015, 01, 29)
-  end
 end

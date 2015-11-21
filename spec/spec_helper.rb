@@ -6,6 +6,8 @@
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 ENV['thor_env'] = 'test'
 ENV['waka_log'] = 'false'
+require 'codeclimate-test-reporter'
+CodeClimate::TestReporter.start
 
 require 'gitwakatime'
 
@@ -35,8 +37,7 @@ RSpec.configure do |config|
     FileUtils.rm_r(File.dirname(@wdir))
   end
 end
-require 'codeclimate-test-reporter'
-CodeClimate::TestReporter.start
+
 require 'webmock/rspec'
 
 WebMock.disable_net_connect!(allow: 'codeclimate.com')
