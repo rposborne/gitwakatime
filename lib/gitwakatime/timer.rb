@@ -77,5 +77,3 @@ module GitWakaTime
     end
   end
 end
-
-

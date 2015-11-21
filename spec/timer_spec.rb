@@ -12,11 +12,11 @@ describe 'description' do
   it 'can be run on dummy' do
     GitWakaTime.config.git = git
     GitWakaTime::Mapper.new(start_at: Date.new(2015, 1, 24))
-    heartbeats = GitWakaTime::Query.new(
+    GitWakaTime::Query.new(
       GitWakaTime::Commit, GitWakaTime::CommitedFile, File.basename(@wdir)
     ).get
     timer = GitWakaTime::Timer.new(
-      GitWakaTime::Commit.all, heartbeats
+      GitWakaTime::Commit.all, GitWakaTime::Heartbeat
     ).process
 
     # # UTC breaks heartbeats of 1 day
