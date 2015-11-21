@@ -4,8 +4,19 @@ engines:
     enabled: true
   rubocop:
     enabled: true
+  brakeman:
+    enabled: true
+  bundler-audit:
+    enabled: true
+  duplication:
+    enabled: true
+    config:
+      languages:
+      - ruby
 ratings:
   paths:
   - "**.rb"
 exclude_paths:
 - spec/**/*
+- ".codeclimate.yml"
+- ".rubocop.yml"
