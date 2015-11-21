@@ -3,7 +3,8 @@
 [![Build Status](https://travis-ci.org/rposborne/gitwakatime.svg?branch=master)](https://travis-ci.org/rposborne/gitwakatime)
 [![Gem Version](https://badge.fury.io/rb/gitwakatime.svg)](http://badge.fury.io/rb/gitwakatime)
 [![Code Climate](https://codeclimate.com/github/rposborne/gitwakatime/badges/gpa.svg)](https://codeclimate.com/github/rposborne/gitwakatime)
-
+[![Test Coverage](https://codeclimate.com/github/rposborne/gitwakatime/badges/coverage.svg)](https://codeclimate.com/github/rposborne/gitwakatime/coverage)
+[![Issue Count](https://codeclimate.com/github/rposborne/gitwakatime/badges/issue_count.svg)](https://codeclimate.com/github/rposborne/gitwakatime)
 GitWakaTime is a mash up between data obtained through "[Wakatime](https://wakatime.com)" and the data we all create using git.
 The principal is to capture a baseline of activity for a task and answer the age old question "How much time did I spend on this?" or "What is the minimum amount I can charge for my time".
 
@@ -42,8 +43,8 @@ Hard reset of the local cache database, if you are getting odd numbers
 ## Assumptions
 
 There a currently a few limitations with this model
-    
-* Merges are free, (no time is attributed a merge).  This is true for most merges but conflict resolution will be attributed to git parent commit of that file for that merge. 
+
+* Merges are free, (no time is attributed a merge).  This is true for most merges but conflict resolution will be attributed to git parent commit of that file for that merge.
 
 ## Output
     Total Recorded time 1 day 9 hrs 13 mins 32 secs
