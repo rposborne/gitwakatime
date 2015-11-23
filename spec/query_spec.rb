@@ -7,11 +7,10 @@ describe 'Query spec' do
 
     @time_range = GitWakaTime::TimeRangeEvaluator.new(
       commits: GitWakaTime::Commit,
-      files: GitWakaTime::CommitedFile,
-      project: File.basename(@wdir)
+      files: GitWakaTime::CommitedFile
     )
 
-    @query = GitWakaTime::Query.new(@time_range)
+    @query = GitWakaTime::Query.new(@time_range, File.basename(@wdir))
   end
 
   before do

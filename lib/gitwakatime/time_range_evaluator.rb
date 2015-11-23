@@ -1,25 +1,28 @@
 module GitWakaTime
-  # Return a array of dates to be look / timed against
+  #
   class TimeRangeEvaluator
-    attr_reader :start_at, :end_at, :project
+    # The first recorded time stamp in Wakatime database happened the day after
+    # this date
+    WAKATIME_EPOCH = Time.new(2013, 5, 1)
 
-    def initialize(commits:, files:, project:)
+    attr_reader :start_at, :end_at
+
+    def initialize(commits:, files:)
+      @start_at, @end_at = Time.now
       @commits = commits
       @files = files
-      @project   = project
 
-      commits    = @commits.select_map(:date).sort
-      d_commits  = @files.select_map(:dependent_date).compact.sort
-      timestamps = (commits + d_commits.flatten).uniq.sort
+      timestamps = [
+        @commits.min(:date),
+        @files.min(:dependent_date),
+        @commits.max(:date),
+        @files.max(:dependent_date)
+      ].compact.map{|s| Time.parse(s)}
 
       # Don't query before the Wakatime Epoch
-      first_commit_at = timestamps.first
-      @start_at = if first_commit_at && first_commit_at >= Time.new(2013, 5, 1)
-                    first_commit_at
-                  else
-                    Time.new(2013, 5, 1)
-                  end
-      @end_at = timestamps.last || Time.now
+      return if timestamps.empty?
+      @start_at = [timestamps.min, WAKATIME_EPOCH].max
+      @end_at = timestamps.max
     end
   end
 end

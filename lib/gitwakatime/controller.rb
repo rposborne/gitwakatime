@@ -14,16 +14,15 @@ module GitWakaTime
       )
 
       @files = CommitedFile.where(
-        'commit_id IN ?',  @relevant_commits.select_map(:id)
+        'commit_id IN ?', @relevant_commits.select_map(:id)
       ).where('project = ?', @project)
 
       @time_range = GitWakaTime::TimeRangeEvaluator.new(
         commits: @relevant_commits,
-        files: @files,
-        project: File.basename(path)
+        files: @files
       )
 
-      @heartbeats = Query.new(@time_range).call
+      @heartbeats = Query.new(@time_range, @project).call
     end
 
     def timer

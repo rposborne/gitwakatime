@@ -1,13 +1,12 @@
 require 'spec_helper'
 
 describe GitWakaTime::TimeRangeEvaluator do
-  subject(:subject) {
+  subject(:subject) do
     described_class.new(
       commits: GitWakaTime::Commit,
-      files: GitWakaTime::CommitedFile,
-      project: 'dummy'
+      files: GitWakaTime::CommitedFile
     )
-  }
+  end
 
   before(:each) do
     GitWakaTime.config.git = Git.open(@wdir)

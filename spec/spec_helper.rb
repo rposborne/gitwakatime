@@ -25,11 +25,11 @@ RSpec.configure do |config|
     GitWakaTime::Heartbeat.new.columns
   end
 
-  config.before(:each) do
-    GitWakaTime::Commit.truncate
-    GitWakaTime::CommitedFile.truncate
-    GitWakaTime::Heartbeat.truncate
+  config.around(:each) do |example|
+    DB.transaction(rollback: :always, auto_savepoint: true) { example.run }
+  end
 
+  config.before(:each) do
     allow(
       GitWakaTime.config
     ).to receive('user_name').and_return('Russell Osborne')
