@@ -9,6 +9,8 @@ ENV['waka_log'] = 'false'
 require 'codeclimate-test-reporter'
 CodeClimate::TestReporter.start
 
+require 'webmock/rspec'
+WebMock.disable_net_connect!(allow: 'codeclimate.com')
 require 'gitwakatime'
 
 RSpec.configure do |config|
@@ -37,10 +39,6 @@ RSpec.configure do |config|
     FileUtils.rm_r(File.dirname(@wdir))
   end
 end
-
-require 'webmock/rspec'
-
-WebMock.disable_net_connect!(allow: 'codeclimate.com')
 
 def set_file_paths
   @test_dir = File.join(File.dirname(__FILE__))
