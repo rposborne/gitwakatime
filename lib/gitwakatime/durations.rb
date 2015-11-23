@@ -12,16 +12,13 @@ module GitWakaTime
 
     def load_heartbeats
       unless cached?
-
-        Log.new 'querying WakaTime heartbeats'
+        Log.new "Gettting heartbeats #{@args[:date]}".red
         time = Benchmark.realtime do
           @heartbeats = @client.heartbeats(@args)
         end
 
         Log.new "API took #{time}s"
         persist_heartbeats_localy(@heartbeats)
-      else
-        Log.new "Heartbeats for #{@args[:date]} are cached"
       end
       true
     end

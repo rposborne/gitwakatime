@@ -4,10 +4,9 @@ module GitWakaTime
   class RequestBuilder
     API_LIMIT = 1 # API ONLY ACCEPTS 1 day
 
-    def initialize(start_at, end_at, project)
+    def initialize(start_at, end_at)
       @start_at = start_at.to_date
       @end_at = end_at.to_date
-      @project = project
     end
 
     def call
@@ -29,7 +28,6 @@ module GitWakaTime
     def construct_params(i)
       {
         date: (@start_at.to_date + i).to_date,
-        project: @project,
         show: 'file,branch,project,time,id'
       }
     end
