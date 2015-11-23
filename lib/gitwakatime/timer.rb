@@ -1,5 +1,6 @@
 require 'benchmark'
 require 'colorize'
+require 'active_support'
 require 'active_support/core_ext/time'
 
 module GitWakaTime

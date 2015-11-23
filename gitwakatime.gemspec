@@ -26,7 +26,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'thor', '>= 0'
   s.add_runtime_dependency 'chronic_duration', '>=0'
   s.add_runtime_dependency 'colorize'
-  s.add_runtime_dependency 'activesupport'
+  s.add_runtime_dependency('activesupport', ['>= 0'])
   s.add_runtime_dependency 'sequel'
   s.add_runtime_dependency 'sqlite3'
   s.add_development_dependency('bundler', ['>= 0'])

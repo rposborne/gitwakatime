@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
-require 'bundler/setup'
-require 'thor'
 require 'gitwakatime'
+require 'thor'
 
 GitWakaTime::Cli.start
