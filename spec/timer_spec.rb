@@ -9,12 +9,10 @@ describe 'description' do
     stub_request(:get, /.*wakatime.com\/api\/v1\/heartbeats/)
       .with(query: hash_including(:date))
       .to_return(body: File.read('./spec/fixtures/heartbeats.json'), status: 200)
-  end
 
-  after do
-    GitWakaTime::Commit.truncate
-    GitWakaTime::CommitedFile.truncate
-    GitWakaTime::Heartbeat.truncate
+    # Prevent any callbacks to git.
+    # TODO: Refactor callbacks.
+    GitWakaTime.config.git = nil
   end
 
   it 'can be run on dummy with no heartbeats' do
