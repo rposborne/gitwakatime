@@ -5,23 +5,9 @@ module GitWakaTime
     def initialize(args)
       return @heartbeats = args[:heartbeats] if args[:heartbeats]
       @args = args
-      @session     = Wakatime::Session.new(api_key: GitWakaTime.config.api_key)
-      @client      = Wakatime::Client.new(@session)
       @heartbeats = []
     end
 
-    def load_heartbeats
-      unless cached?
-        Log.new "Gettting heartbeats #{@args[:date]}".red
-        time = Benchmark.realtime do
-          @heartbeats = @client.heartbeats(@args)
-        end
-
-        Log.new "API took #{time}s"
-        persist_heartbeats_localy(@heartbeats)
-      end
-      true
-    end
 
     def persist_heartbeats_localy(heartbeats)
       heartbeats.map do |heartbeat|
@@ -32,18 +18,6 @@ module GitWakaTime
           a.update(heartbeat)
         end
       end
-    end
-
-    def cached?
-      max_local_timetamp = Heartbeat.max(:time)
-      return false if max_local_timetamp.nil?
-      @max_local_timetamp ||= (Time.parse(max_local_timetamp))
-
-      @args[:date].to_date < @max_local_timetamp.to_date
-    end
-
-    def cached_heartbeats
-      Heartbeat.where('DATE(time) == ?', @args[:date]).order(Sequel.asc(:time))
     end
 
     def heartbeats_to_durations(timeout = 15)

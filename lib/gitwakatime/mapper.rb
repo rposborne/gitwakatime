@@ -24,7 +24,7 @@ module GitWakaTime
           end
         end.compact
       end
-      Log.new "Map Completed took #{time}s with #{Commit.count}"
+      Log.new "Map Completed took #{time}s with #{Commit.count} commits"
     end
   end
 end
