@@ -15,7 +15,7 @@ describe GitWakaTime::TimeRangeEvaluator do
 
   describe 'start_at' do
     it 'returns the date of the first commit of the current project' do
-      expect(subject.start_at.utc).to eql(Time.parse('2015-01-29 21:49:12 -0500').utc)
+      expect(subject.start_at).to eql(Time.parse('2015-01-30 02:49:12 UTC').utc)
     end
   end
 

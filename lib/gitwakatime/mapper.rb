@@ -10,7 +10,6 @@ module GitWakaTime
         logs =  g.log(commits).since(start_at).until(Date.today)
 
         @commits = logs.map do |git_c|
-          puts git_c.date.utc
           next if git_c.author.name != GitWakaTime.config.user_name
           next if git_c.parents.size > 1
 

@@ -8,6 +8,7 @@ else
 end
 
 Sequel::Model.plugin :json_serializer
+Sequel.default_timezone = :utc
 DB.use_timestamp_timezones = false
 
 require 'gitwakatime/version'

@@ -17,7 +17,7 @@ module GitWakaTime
         @files.min(:dependent_date),
         @commits.max(:date),
         @files.max(:dependent_date)
-      ].compact.map { |s| Time.parse(s) }
+      ].compact.map { |s| Time.parse("#{s} UTC") }
 
       # Don't query before the Wakatime Epoch
       return if timestamps.empty?
