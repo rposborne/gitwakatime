@@ -21,7 +21,7 @@ describe GitWakaTime::TimeRangeEvaluator do
 
   describe 'end_at' do
     it 'returns the date of the last commit of the current project' do
-      expect(subject.end_at.utc).to eql(Time.parse('2015-01-30 05:19:00 -0500').utc)
+      expect(subject.end_at.utc).to eql(Time.parse('2015-01-30 05:19:00 UTC').utc)
     end
   end
 end

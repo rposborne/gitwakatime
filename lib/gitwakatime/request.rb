@@ -28,7 +28,7 @@ module GitWakaTime
     def cached?
       max_local_timetamp = Heartbeat.max(:time)
       return false if max_local_timetamp.nil?
-      @max_local_timetamp ||= (Time.parse(max_local_timetamp))
+      @max_local_timetamp ||= (Time.parse(max_local_timetamp + ' UTC'))
 
       @args[:date].to_date < @max_local_timetamp.to_date
     end

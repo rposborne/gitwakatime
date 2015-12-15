@@ -49,7 +49,7 @@ module  GitWakaTime
       if self.commit.date < split_tree_file.commit.date
         self.dependent_date = split_tree_file.commit.date
       elsif self.commit.date > split_tree_file.commit.date
-        split_tree_file.update(dependent_date: commit.date)
+        split_tree_file.update(dependent_date: commit.date.utc)
       end
     end
 
