@@ -10,8 +10,11 @@ module GitWakaTime
       @git_map = Mapper.new(start_at: date)
       @project = File.basename(GitWakaTime.config.git.dir.path)
       @relevant_commits = Commit.where(
-        'date > ? and project = ?', date, @project
+        'project = ?', @project
       )
+
+      # Scope by date if one has been passed
+      @relevant_commits = @relevant_commits.where('date > ? ', date) if date
 
       @files = CommitedFile.where(
         'commit_id IN ?', @relevant_commits.select_map(:id)

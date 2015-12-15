@@ -8,7 +8,7 @@ module GitWakaTime
     attr_reader :start_at, :end_at
 
     def initialize(commits:, files:)
-      @start_at, @end_at = Time.now
+      @start_at = @end_at = Time.now
       @commits = commits
       @files = files
 

@@ -11,12 +11,14 @@ module GitWakaTime
       @requests = RequestBuilder.new(@start_at, @end_at).call
       @session     = Wakatime::Session.new(api_key: GitWakaTime.config.api_key)
       @client      = Wakatime::Client.new(@session)
+
+      Log.new "Loading commited time from #{@start_at} to #{@end_at}".red
     end
 
     def call
       heartbeats = []
       @requests.each do |params|
-        heartbeats << load_heartbeats(params)
+        persist_heartbeats_localy(load_heartbeats(params)) unless cached?(params)
       end
 
       Durations.new(
@@ -29,16 +31,13 @@ module GitWakaTime
     private
 
     def load_heartbeats(params)
-      unless cached?(params)
-        Log.new "Gettting heartbeats #{params[:date]}".red
-        time = Benchmark.realtime do
-          @heartbeats = @client.heartbeats(params)
-        end
-
-        Log.new "API took #{time}s"
-        persist_heartbeats_localy(@heartbeats)
+      Log.new "Gettting heartbeats #{params[:date]}".red
+      time = Benchmark.realtime do
+        @result = @client.heartbeats(params) || []
       end
-       @heartbeats
+      Log.new "API took #{time}s"
+
+      @result
     end
 
     def persist_heartbeats_localy(heartbeats)
@@ -53,11 +52,10 @@ module GitWakaTime
     end
 
     def cached?(params)
-      max_local_timetamp = Heartbeat.max(:time)
-      return false if max_local_timetamp.nil?
-      @max_local_timetamp ||= (Time.parse(max_local_timetamp))
-
-      params[:date].to_date < @max_local_timetamp.to_date
+      max_local_timestamp = Heartbeat.max(:time)
+      return false if max_local_timestamp.nil?
+      @max_local_timestamp ||= (Time.parse(max_local_timestamp))
+      params[:date].to_date < @max_local_timestamp.to_date
     end
 
     def local_heartbeats
