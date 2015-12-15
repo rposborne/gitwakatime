@@ -25,6 +25,10 @@ module GitWakaTime
       commited_files.map(&:time_in_seconds).compact.inject(:+)
     end
 
+    def date
+      self[:date].localtime
+    end
+
     private
 
     def extract_changed_files
