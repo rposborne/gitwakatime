@@ -4,7 +4,7 @@ require 'colorize'
 module GitWakaTime
   # Integrates the nested hash from mapper with heartbeats api
   class Query
-    def initialize(range, project, arg = {})
+    def initialize(range, project, _arg = {})
       @start_at = range.start_at
       @end_at = range.end_at
       @project = project
