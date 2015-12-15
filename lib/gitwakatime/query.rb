@@ -4,7 +4,7 @@ require 'colorize'
 module GitWakaTime
   # Integrates the nested hash from mapper with heartbeats api
   class Query
-    def initialize(range, project, _arg = {})
+    def initialize(range, project)
       @start_at = range.start_at
       @end_at = range.end_at
       @project = project
@@ -18,7 +18,8 @@ module GitWakaTime
     def call
       heartbeats = []
       @requests.each do |params|
-        persist_heartbeats_localy(load_heartbeats(params)) unless cached?(params)
+        next if cached?(params[:date])
+        persist_heartbeats_localy(load_heartbeats(params))
       end
 
       Durations.new(
@@ -26,6 +27,13 @@ module GitWakaTime
       ).heartbeats_to_durations
 
       local_heartbeats.where(project: @project).all
+    end
+
+    def cached?(date)
+      max_local_timestamp = Heartbeat.max(:time)
+      return false if max_local_timestamp.nil?
+      @max_local_timestamp ||= (Time.parse(max_local_timestamp))
+      date.to_date < @max_local_timestamp.to_date
     end
 
     private
@@ -49,13 +57,6 @@ module GitWakaTime
           a.update(heartbeat)
         end
       end
-    end
-
-    def cached?(params)
-      max_local_timestamp = Heartbeat.max(:time)
-      return false if max_local_timestamp.nil?
-      @max_local_timestamp ||= (Time.parse(max_local_timestamp))
-      params[:date].to_date < @max_local_timestamp.to_date
     end
 
     def local_heartbeats
