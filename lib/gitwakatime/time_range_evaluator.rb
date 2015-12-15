@@ -22,7 +22,7 @@ module GitWakaTime
       # Don't query before the Wakatime Epoch
       return if timestamps.empty?
       @start_at = [timestamps.min, WAKATIME_EPOCH].max
-      @end_at = timestamps.max
+      @end_at = timestamps.max || Time.now
     end
   end
 end

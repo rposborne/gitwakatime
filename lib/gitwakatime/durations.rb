@@ -8,18 +8,6 @@ module GitWakaTime
       @heartbeats = []
     end
 
-
-    def persist_heartbeats_localy(heartbeats)
-      heartbeats.map do |heartbeat|
-        heartbeat['uuid'] = heartbeat['id']
-        heartbeat['time'] = Time.at(heartbeat['time'])
-        heartbeat.delete('id')
-        Heartbeat.find_or_create(uuid: heartbeat['uuid']) do |a|
-          a.update(heartbeat)
-        end
-      end
-    end
-
     def heartbeats_to_durations(timeout = 15)
       durations = []
       current = nil
