@@ -9,6 +9,8 @@ module GitWakaTime
       GitWakaTime.config.root = path
       GitWakaTime.config.load_config_yaml
       GitWakaTime.config.git = Git.open(path)
+      GitWakaTime::Query.new(date, Date.today, @project).call
+
       @git_map = Mapper.new(start_at: date)
       @project = File.basename(GitWakaTime.config.git.dir.path)
       @relevant_commits = Commit.where(
