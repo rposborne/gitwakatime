@@ -1,4 +1,4 @@
 require 'spec_helper'
 
-describe GitWakaTime::Durations do
+describe GitWakaTime::DurationsCalculator do
 end

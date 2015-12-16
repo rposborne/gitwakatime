@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe GitWakaTime::Query do
-  subject(:subject) { described_class.new(time_range, File.basename(@wdir)) }
 
   before(:each) do
     GitWakaTime.config.git = Git.open(@wdir)
@@ -10,7 +9,7 @@ describe GitWakaTime::Query do
 
   let(:start_at) { Date.new(2015, 1, 24) }
   let(:end_at) { Date.new(2015, 2, 24) }
-  let(:time_range) { double('time_range', start_at: start_at, end_at: end_at) }
+  subject(:subject) { described_class.new(start_at, end_at, File.basename(@wdir)) }
 
   before do
     stub_request(:get, /.*wakatime.com\/api\/v1\/users\/current\/heartbeats/)

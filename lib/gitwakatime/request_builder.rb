@@ -2,10 +2,11 @@ module GitWakaTime
   # Build an array of hash's (params) that can be iterated over for the
   # wakatime API.
   class RequestBuilder
+    WAKATIME_EPOCH = Date.new(2013, 5, 1)
     API_LIMIT = 1 # API ONLY ACCEPTS 1 day
 
     def initialize(start_at, end_at)
-      @start_at = start_at.to_date
+      @start_at = [start_at.to_date, WAKATIME_EPOCH].max
       @end_at = end_at.to_date
     end
 

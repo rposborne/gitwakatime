@@ -1,6 +1,6 @@
 module GitWakaTime
   # Extract Duration Data from Heartbeats for the WAKATIME API
-  class Durations
+  class DurationsCalculator
     attr_accessor :heartbeats
     def initialize(args)
       return @heartbeats = args[:heartbeats] if args[:heartbeats]

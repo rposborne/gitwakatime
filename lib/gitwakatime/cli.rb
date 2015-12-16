@@ -9,7 +9,7 @@ require 'active_support/core_ext/date/calculations'
 require 'active_support/core_ext/date_and_time/calculations'
 require 'active_support/core_ext/integer/time'
 require 'active_support/core_ext/time'
-require 'pry'
+
 module  GitWakaTime
   # Provides two CLI heartbeats init and tally
   class Cli < Thor
@@ -51,6 +51,19 @@ module  GitWakaTime
       @timer = GitWakaTime::Controller.new(
         path: File.expand_path(options.file), date: date
       ).timer
+
+      print_output(@timer, format: options.output)
+    end
+
+    desc 'update', 'Produce time spend for each commit and file in each commit'
+    method_option :start_on, aliases: '-s'
+    def update
+
+      GitWakaTime.config.setup_local_db
+      GitWakaTime.config.load_config_yaml
+      date = Date.parse(options.start_on || GitWakaTime::Heartbeat.max(:time))
+
+      GitWakaTime::Query.new(date, Date.today, @project).call
 
       print_output(@timer, format: options.output)
     end

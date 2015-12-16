@@ -1,6 +1,8 @@
 module GitWakaTime
   # Extract Duration Data from Heartbeats for the WAKATIME API
   class Controller
+    attr_accessor :time_range, :heartbeats, :relevant_commits, :project
+
     def initialize(path: '.', date: nil)
       @path = path
       GitWakaTime.config.setup_local_db
@@ -19,13 +21,6 @@ module GitWakaTime
       @files = CommitedFile.where(
         'commit_id IN ?', @relevant_commits.select_map(:id)
       ).where('project = ?', @project)
-
-      @time_range = GitWakaTime::TimeRangeEvaluator.new(
-        commits: @relevant_commits,
-        files: @files
-      )
-
-      @heartbeats = Query.new(@time_range, @project).call
     end
 
     def timer

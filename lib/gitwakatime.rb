@@ -12,12 +12,12 @@ Sequel.default_timezone = :utc
 DB.use_timestamp_timezones = false
 
 require 'gitwakatime/version'
-require 'gitwakatime/durations'
+require 'gitwakatime/durations_calculator'
 require 'gitwakatime/heartbeat'
 require 'gitwakatime/commit'
 require 'gitwakatime/mapper'
 require 'gitwakatime/query'
-require 'gitwakatime/time_range_evaluator'
+require 'gitwakatime/request'
 require 'gitwakatime/request_builder'
 require 'gitwakatime/timer'
 require 'gitwakatime/log'
