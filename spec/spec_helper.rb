@@ -6,8 +6,8 @@
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 ENV['thor_env'] = 'test'
 ENV['waka_log'] = 'false'
-require 'codeclimate-test-reporter'
-CodeClimate::TestReporter.start
+require 'simplecov'
+SimpleCov.start
 
 require 'webmock/rspec'
 WebMock.disable_net_connect!(allow: 'codeclimate.com')
