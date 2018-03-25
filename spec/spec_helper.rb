@@ -20,6 +20,11 @@ RSpec.configure do |config|
   config.before(:all) do
     @wdir = set_file_paths
     GitWakaTime.config.setup_local_db
+
+    require_relative '../lib/gitwakatime/models/heartbeat'
+    require_relative '../lib/gitwakatime/models/commit'
+    require_relative '../lib/gitwakatime/models/commited_file'
+
     GitWakaTime::Commit.new.columns
     GitWakaTime::CommitedFile.new.columns
     GitWakaTime::Heartbeat.new.columns
