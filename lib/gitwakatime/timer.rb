@@ -63,11 +63,11 @@ module GitWakaTime
     end
 
     def heartbeats_before(heartbeats, date)
-      heartbeats.where('time <= ? ', date)
+      heartbeats.where(Sequel[:time] <= date)
     end
 
     def heartbeats_after(heartbeats, date)
-      heartbeats.where('time >= ? ', date)
+      heartbeats.where(Sequel[:time] >= date)
     end
 
     def sum_heartbeats(heartbeats)
