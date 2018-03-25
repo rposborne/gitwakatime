@@ -1,5 +1,8 @@
 require 'sequel'
 
+Sequel::Model.plugin :json_serializer
+Sequel.default_timezone = :utc
+
 if ENV['thor_env'] != 'test'
   DB = Sequel.connect("sqlite://#{File.join(Dir.home, '.wakatime.sqlite')}")
 else
@@ -7,23 +10,20 @@ else
   DB = Sequel.sqlite
 end
 
-Sequel::Model.plugin :json_serializer
-Sequel.default_timezone = :utc
 DB.use_timestamp_timezones = false
 
-require 'gitwakatime/version'
-require 'gitwakatime/durations_calculator'
-require 'gitwakatime/heartbeat'
-require 'gitwakatime/commit'
-require 'gitwakatime/mapper'
-require 'gitwakatime/query'
-require 'gitwakatime/request'
-require 'gitwakatime/request_builder'
-require 'gitwakatime/timer'
-require 'gitwakatime/log'
-require 'gitwakatime/commited_file'
-require 'gitwakatime/controller'
-require 'gitwakatime/cli'
+
+require_relative './gitwakatime/version'
+require_relative './gitwakatime/durations_calculator'
+require_relative './gitwakatime/mapper'
+require_relative './gitwakatime/query'
+require_relative './gitwakatime/request'
+require_relative './gitwakatime/request_builder'
+require_relative './gitwakatime/timer'
+require_relative './gitwakatime/log'
+require_relative './gitwakatime/controller'
+require_relative './gitwakatime/cli'
+
 
 # It's a module :)
 module GitWakaTime

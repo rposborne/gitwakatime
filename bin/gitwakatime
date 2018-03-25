@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-require 'gitwakatime'
+require 'pry'
 require 'thor'
-
+require_relative '../lib/gitwakatime'
 GitWakaTime::Cli.start

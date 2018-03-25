@@ -5,8 +5,8 @@ module GitWakaTime
   # Integrates the nested hash from mapper with heartbeats api
   class Query
     def initialize(start_at, end_at, project)
-      @start_at = start_at
-      @end_at = end_at
+      @start_at = start_at.to_time
+      @end_at = end_at.to_time
       @project = project
       @requests = RequestBuilder.new(@start_at, @end_at).call
       Log.new "Loading Committed time from #{@start_at} to #{@end_at}".red
@@ -18,7 +18,7 @@ module GitWakaTime
         persist_heartbeats_localy(Request.new(params).call)
       end
 
-      DurationsCalculator.new(heartbeats: local_heartbeats.where('duration <= 0') ).heartbeats_to_durations
+      DurationsCalculator.new(heartbeats: local_heartbeats.where((Sequel[:duration] <= 0)) ).heartbeats_to_durations
       local_heartbeats.where(project: @project).all
     end
 
@@ -43,9 +43,7 @@ module GitWakaTime
     end
 
     def local_heartbeats
-      Heartbeat.where(
-        'time >= ? and time <= ? ', @start_at, @end_at
-      )
+      Heartbeat.where(time: @start_at..@end_at)
     end
   end
 end

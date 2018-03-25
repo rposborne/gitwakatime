@@ -48,6 +48,9 @@ module  GitWakaTime
     def tally
       date = Date.parse(options.start_on)
 
+      require_relative 'models/heartbeat'
+      require_relative 'models/commit'
+      require_relative 'models/commited_file'
 
       @timer = GitWakaTime::Controller.new(
         path: File.expand_path(options.file), date: date
@@ -57,10 +60,15 @@ module  GitWakaTime
     end
 
     desc 'update', 'Cache the latest heartbeats locally'
-    method_option :start_on, aliases: '-s'
+    method_option :start_on, aliases: '-s', default: Date.today - 7
     def update
       GitWakaTime.config.setup_local_db
       GitWakaTime.config.load_config_yaml
+
+      require_relative 'models/heartbeat'
+      require_relative 'models/commit'
+      require_relative 'models/commited_file'
+
       date = Date.parse(options.start_on || GitWakaTime::Heartbeat.max(:time))
 
       GitWakaTime::Query.new(date, Date.today, @project).call

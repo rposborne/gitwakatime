@@ -13,16 +13,14 @@ module GitWakaTime
 
       @git_map = Mapper.new(start_at: date)
       @project = File.basename(GitWakaTime.config.git.dir.path)
-      @relevant_commits = Commit.where(
-        'project = ?', @project
-      )
+      @relevant_commits = Commit.where( project: @project )
 
       # Scope by date if one has been passed
-      @relevant_commits = @relevant_commits.where('date > ? ', date) if date
+      @relevant_commits = @relevant_commits.where(Sequel[:date] > date) if date
 
       @files = CommitedFile.where(
-        'commit_id IN ?', @relevant_commits.select_map(:id)
-      ).where('project = ?', @project)
+        commit_id: @relevant_commits.select_map(:id)
+      ).where(project: @project)
     end
 
     def timer
